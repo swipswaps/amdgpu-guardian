@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Builds in /tmp, installs with sudo.
+# install-root-cause-tools.sh – Diagnostic + manual fallback.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Working)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Definitive Final)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -31,11 +31,10 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – build in /tmp
+# 2. UMR – diagnostic build
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
-# Remove old build if present
 if [ -d /tmp/umr ]; then
     rm -rf /tmp/umr
 fi
@@ -43,15 +42,18 @@ fi
 git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
 cd /tmp/umr || { echo "ERROR: Failed to enter /tmp/umr"; exit 1; }
 
-# Detect and use the correct build method
+echo "  Contents of /tmp/umr:"
+ls -la
+
+echo "  Attempting autogen.sh build..."
 if [ -f autogen.sh ]; then
-    echo "  Using autogen.sh..."
+    chmod +x autogen.sh
     ./autogen.sh || { echo "ERROR: autogen.sh failed."; exit 1; }
     ./configure || { echo "ERROR: configure failed."; exit 1; }
     make || { echo "ERROR: make failed."; exit 1; }
     sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
 elif [ -f configure.ac ]; then
-    echo "  Using autoreconf..."
+    echo "  autogen.sh missing, using autoreconf..."
     autoreconf -i || { echo "ERROR: autoreconf failed."; exit 1; }
     ./configure || { echo "ERROR: configure failed."; exit 1; }
     make || { echo "ERROR: make failed."; exit 1; }
@@ -66,10 +68,11 @@ elif [ -f meson.build ]; then
     ninja -C build || { echo "ERROR: ninja build failed."; exit 1; }
     sudo ninja -C build install || { echo "ERROR: ninja install failed."; exit 1; }
 else
-    echo "ERROR: No known build system found for UMR."
-    echo "Please build manually:"
+    echo "ERROR: No known build system found."
+    echo "Manual fallback steps:"
     echo "  cd /tmp/umr"
     echo "  ./autogen.sh && ./configure && make && sudo make install"
+    echo "  (If autogen.sh is missing, run: autoreconf -i)"
     exit 1
 fi
 echo "  ✅ UMR installed."
