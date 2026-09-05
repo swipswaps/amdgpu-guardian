@@ -1,0 +1,210 @@
+=== diagnose_rgd_deps_mechanism.sh — 20260905140741 UTC ===
+repo: swipswaps/amdgpu-guardian   branch: master
+
+Cloning into '/tmp/rgd_mech_20260905140741'...
+clone exit: 0
+
+=== A. THE build/ DIRECTORY (why "mkdir build" fails in the installer) ===
+total 32
+drwxr-xr-x.  3 owner owner   120 Sep  5 10:07 .
+drwxr-xr-x. 10 owner owner   400 Sep  5 10:07 ..
+-rw-r--r--.  1 owner owner  2864 Sep  5 10:07 dependency_map.py
+-rw-r--r--.  1 owner owner  7455 Sep  5 10:07 fetch_dependencies.py
+-rw-r--r--.  1 owner owner 20137 Sep  5 10:07 pre_build.py
+drwxr-xr-x.  2 owner owner    60 Sep  5 10:07 utils
+--- recursive listing ---
+/tmp/rgd_mech_20260905140741/build
+/tmp/rgd_mech_20260905140741/build/utils
+/tmp/rgd_mech_20260905140741/build/utils/get_version.py
+/tmp/rgd_mech_20260905140741/build/pre_build.py
+/tmp/rgd_mech_20260905140741/build/fetch_dependencies.py
+/tmp/rgd_mech_20260905140741/build/dependency_map.py
+
+=== B. IS THERE A DEPENDENCY FETCH SCRIPT? ===
+find: warning: you have specified the global option -maxdepth after the argument -iname, but global options are not positional, i.e., -maxdepth affects tests specified before it as well as those specified after it.  Please specify global options before other arguments.
+find: warning: you have specified the global option -maxdepth after the argument -iname, but global options are not positional, i.e., -maxdepth affects tests specified before it as well as those specified after it.  Please specify global options before other arguments.
+find: warning: you have specified the global option -maxdepth after the argument -iname, but global options are not positional, i.e., -maxdepth affects tests specified before it as well as those specified after it.  Please specify global options before other arguments.
+/tmp/rgd_mech_20260905140741/test/scripts/TestRunner.py
+/tmp/rgd_mech_20260905140741/test/scripts/JsonTests.py
+/tmp/rgd_mech_20260905140741/documentation/source/conf.py
+/tmp/rgd_mech_20260905140741/build/utils/get_version.py
+/tmp/rgd_mech_20260905140741/build/pre_build.py
+/tmp/rgd_mech_20260905140741/build/fetch_dependencies.py
+/tmp/rgd_mech_20260905140741/build/dependency_map.py
+--- if a fetch script exists, its --help ---
+FOUND: /tmp/rgd_mech_20260905140741/build/fetch_dependencies.py
+#! python3
+# Copyright (c) 2023 Advanced Micro Devices, Inc. All rights reserved.
+#
+# Script to fetch all external git and/or downloadable dependencies needed to build the project
+#
+#   fetch_dependencies.py
+#
+# Each git repo will be updated to the commit specified in the "gitMapping" table.
+
+import os
+import subprocess
+import sys
+import zipfile
+import tarfile
+import platform
+import argparse
+import stat
+import shutil
+import errno
+
+
+# Check for the python 3.x name and import it as the 2.x name
+try:
+    import urllib.request as urllib
+# if that failed, then try the 2.x name
+except ImportError:
+    import urllib
+
+# to allow the script to be run from anywhere - not just the cwd - store the absolute path to the script file
+script_root = os.path.dirname(os.path.realpath(__file__))
+
+# also store the basename of the file
+script_name = os.path.basename(__file__)
+
+# Print a message to the console with appropriate pre-amble
+def log_print(message):
+    print ("\n" + script_name + ": " + message)
+    sys.stdout.flush()
+    
+# add script root to support import of URL and git maps
+--- dependency map it declares ---
+
+=== C. WHAT THE README SAYS TO DO BEFORE CMAKE ===
+2:[![Build Status](https://github.com/GPUOpen-Tools/radeon_gpu_detective/actions/workflows/build.yml/badge.svg)](https://github.com/GPUOpen-Tools/radeon_gpu_detective/actions/workflows/build.yml)
+10:## Build Instructions ##
+11:It is recommended to build the tool using the "pre_build.py" script which can be found under the "build" subdirectory.
+16:cd build
+21:python pre_build.py
+30:python pre_build.py --vs 2019
+106: ├─[X] "TLAS Build"
+
+=== D. WHERE CMAKE EXPECTS THE MODULE PATH TO POINT ===
+#=============================================================================
+# Copyright (c) 2025 Advanced Micro Devices, Inc. All rights reserved.
+#  @author AMD Developer Tools Team
+#  @file
+#  @brief  Top level CMakeLists file.
+#=============================================================================
+
+cmake_minimum_required (VERSION 3.13)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project (RGD)
+
+# Define version information
+set(RGD_MAJOR_VERSION 1)
+set(RGD_MINOR_VERSION 6)
+set(RGD_PATCH_NUMBER 3)
+if (NOT RGD_BUILD_NUMBER)
+    set(RGD_BUILD_NUMBER 0)
+endif ()
+
+string(TIMESTAMP DATE "\"%m/%d/%Y\"")
+string(TIMESTAMP YEAR "\"%Y\"")
+
+configure_file("${CMAKE_SOURCE_DIR}/Buildinfo.properties.in" "${CMAKE_SOURCE_DIR}/Buildinfo.properties")
+configure_file("${CMAKE_SOURCE_DIR}/source/radeon_gpu_detective_backend/rgd_version_info.h.in" "${CMAKE_SOURCE_DIR}/source/radeon_gpu_detective_backend/rgd_version_info.h")
+
+# Add cmake utilities
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/rmv/cmake")
+include(dev_tools)
+
+# Include directories for all projects.
+set(AMDGPU_DIS_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/external/amd_gpu_dis/Include/)
+include_directories("${PROJECT_SOURCE_DIR}/external/")
+include_directories("${PROJECT_SOURCE_DIR}/external/third_party/")
+include_directories("${PROJECT_SOURCE_DIR}/external/comgr_utils/")
+
+# RDF.
+set(RDF_STATIC ON)
+set(RDF_ENABLE_CXX_BINDINGS ON)
+add_subdirectory(external/rdf)
+
+# System info.
+set(SYSTEM_INFO_BUILD_RDF_INTERFACES ON)
+add_subdirectory(external/system_info_utils)
+
+# RMV.
+add_subdirectory(external/rmv/source/parser parser)
+add_subdirectory(external/rmv/source/backend backend)
+# FIXME
+# RMV includes RDF and SystemInfo incorrectly and set up their include directories manually.
+# RGD previously used them similarly incorrectly, which made RMV work.
+# We need to tell CMake that these RMV components use RDF and SystemInfo
+# as otherwise SystemInfo will be unable to find RDF's headers when building RMV.
+target_link_libraries(RmvParser PRIVATE rdf)
+target_link_libraries(RmvBackend PRIVATE rdf system_info)
+
+# ISA Spec Manager.
+set(EXCLUDE_ISA_CLI_EXAMPLES_TESTS ON)
+
+=== E. WHAT external/ ACTUALLY CONTAINS ON A CLEAN CLONE ===
+/tmp/rgd_mech_20260905140741/external
+/tmp/rgd_mech_20260905140741/external/dev_driver
+/tmp/rgd_mech_20260905140741/external/dev_driver/include
+/tmp/rgd_mech_20260905140741/external/amd_gpu_dis
+/tmp/rgd_mech_20260905140741/external/amd_gpu_dis/Lib
+/tmp/rgd_mech_20260905140741/external/amd_gpu_dis/Include
+/tmp/rgd_mech_20260905140741/external/.gitattributes
+
+=== F. SDL2 REPLACEMENT NAME ON THIS HOST ===
+  NO MATCH  : SDL2-devel            
+  AVAILABLE : sdl2-compat-devel      -> sdl2-compat-devel.i686
+  AVAILABLE : SDL3-devel             -> SDL3-devel.i686
+  AVAILABLE : sdl12-compat-devel     -> sdl12-compat-devel.i686
+--- what provides sdl2.pc ---
+Updating and loading repositories:
+ timescale_timescaledb                  100% | 136.0 KiB/s | 241.9 KiB |  00m02s
+Repositories loaded.
+No matches found. If searching for a file, try specifying the full path or using a wildcard prefix ("*/") at the beginning.
+
+=== G. DOES THE INSTALLED umr ACTUALLY HAVE GUI COMPILED IN? ===
+--- linked libraries (SDL/EGL/gbm present => GUI built) ---
+	linux-vdso.so.1 (0x00007f80e03bf000)
+	libncurses.so.6 => /lib64/libncurses.so.6 (0x00007f80e0366000)
+	libtinfo.so.6 => /lib64/libtinfo.so.6 (0x00007f80e0339000)
+	libpciaccess.so.0 => /lib64/libpciaccess.so.0 (0x00007f80e032f000)
+	libGL.so.1 => /lib64/libGL.so.1 (0x00007f80e02bc000)
+	libEGL.so.1 => /lib64/libEGL.so.1 (0x00007f80e02ab000)
+	libLLVM.so.21.1 => /lib64/libLLVM.so.21.1 (0x00007f80d7800000)
+	libOpenGL.so.0 => /lib64/libOpenGL.so.0 (0x00007f80e0285000)
+	libdrm.so.2 => /lib64/libdrm.so.2 (0x00007f80e026e000)
+	libgbm.so.1 => /lib64/libgbm.so.1 (0x00007f80e0268000)
+	libSDL2-2.0.so.0 => /lib64/libSDL2-2.0.so.0 (0x00007f80e0206000)
+	libstdc++.so.6 => /lib64/libstdc++.so.6 (0x00007f80d7400000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007f80d770b000)
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f80e01d8000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007f80d720d000)
+	libGLX.so.0 => /lib64/libGLX.so.0 (0x00007f80e01a7000)
+	libX11.so.6 => /lib64/libX11.so.6 (0x00007f80d70c8000)
+	libXext.so.6 => /lib64/libXext.so.6 (0x00007f80e0193000)
+	libGLdispatch.so.0 => /lib64/libGLdispatch.so.0 (0x00007f80d7693000)
+	libffi.so.8 => /lib64/libffi.so.8 (0x00007f80e0181000)
+	libedit.so.0 => /lib64/libedit.so.0 (0x00007f80d708e000)
+	libz.so.1 => /lib64/libz.so.1 (0x00007f80d7066000)
+	libzstd.so.1 => /lib64/libzstd.so.1 (0x00007f80d6fa3000)
+	libxml2.so.2 => /lib64/libxml2.so.2 (0x00007f80d6e45000)
+	libexpat.so.1 => /lib64/libexpat.so.1 (0x00007f80d6e1a000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f80e03c1000)
+	libxcb.so.1 => /lib64/libxcb.so.1 (0x00007f80d6df0000)
+	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007f80d6dbb000)
+	libXau.so.6 => /lib64/libXau.so.6 (0x00007f80e017a000)
+--- filtered ---
+	libGL.so.1 => /lib64/libGL.so.1 (0x00007fe7e5d0e000)
+	libEGL.so.1 => /lib64/libEGL.so.1 (0x00007fe7e5cfd000)
+	libOpenGL.so.0 => /lib64/libOpenGL.so.0 (0x00007fe7e5cd7000)
+	libgbm.so.1 => /lib64/libgbm.so.1 (0x00007fe7e5cba000)
+	libSDL2-2.0.so.0 => /lib64/libSDL2-2.0.so.0 (0x00007fe7e5c58000)
+	libGLX.so.0 => /lib64/libGLX.so.0 (0x00007fe7e5bf9000)
+	libGLdispatch.so.0 => /lib64/libGLdispatch.so.0 (0x00007fe7dd093000)
+(no SDL/EGL/gbm above => cmake hit CMakeLists.txt:152 and set UMR_GUI OFF)
+
+=== END DIAGNOSTIC ===
