@@ -1,0 +1,33 @@
+#!/bin/bash
+# root-cause-checker.sh – list all tools and their status
+
+echo "═══════════════════════════════════════════════════════════"
+echo "  AMDGPU Root‑Cause Toolkit – Tool Presence Check"
+echo "═══════════════════════════════════════════════════════════"
+
+TOOLS=(
+    "rocm-smi:rocm-smi"
+    "radeontop:radeontop"
+    "nvtop:nvtop"
+    "trace-cmd:trace-cmd"
+    "perf:perf"
+    "rocgdb:rocgdb"
+    "rocprofiler:rocprofiler"
+    "umr:umr"
+    "rgd:rgd"
+    "rvs:rvs"
+)
+
+for entry in "${TOOLS[@]}"; do
+    name="${entry%%:*}"
+    cmd="${entry##*:}"
+    if command -v "$cmd" &>/dev/null; then
+        echo "  ✅ $name – installed"
+    else
+        echo "  ❌ $name – not found"
+    fi
+done
+echo ""
+echo "Note: To use RGD, you need a crash dump (.rgd file)."
+echo "To use UMR, run: sudo umr -R ring_0"
+echo "═══════════════════════════════════════════════════════════"
