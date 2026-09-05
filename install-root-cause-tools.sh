@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Fully comprehensive, builds with CMake.
+# install-root-cause-tools.sh – Comprehensive with all deps including gbm-devel.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Comp)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Ultimate Final)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -26,13 +26,15 @@ fi
 # ------------------------------------------------------------------
 # 1. Install all known build dependencies
 # ------------------------------------------------------------------
-echo "[1] Installing all build dependencies..."
+echo "[1] Installing all build dependencies (including gbm-devel)..."
 sudo dnf install -y \
     rocm-smi radeontop nvtop trace-cmd perf \
     git make gcc g++ cmake python3 sqlite3 \
     autoconf automake libtool meson ninja-build \
     ncurses-devel zlib-devel libdrm-devel \
-    llvm-devel clang llvm-toolset
+    llvm-devel clang \
+    gbm-devel libglvnd-devel libglvnd-egl \
+    pkgconfig
 
 # Skip unavailable ROCm packages (they are optional)
 sudo dnf install -y --skip-unavailable \
@@ -40,11 +42,13 @@ sudo dnf install -y --skip-unavailable \
     git make gcc g++ cmake python3 sqlite3 \
     autoconf automake libtool meson ninja-build \
     ncurses-devel zlib-devel libdrm-devel \
-    llvm-devel clang llvm-toolset \
+    llvm-devel clang \
+    gbm-devel libglvnd-devel libglvnd-egl \
+    pkgconfig \
     rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – CMake build (now with LLVM)
+# 2. UMR – CMake build (now with gbm-devel)
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
@@ -56,15 +60,15 @@ git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
 cd /tmp/umr || { echo "ERROR: Failed to enter /tmp/umr"; exit 1; }
 
 if [ -f CMakeLists.txt ]; then
-    echo "  Building UMR with CMake..."
+    echo "  Building UMR with CMake (GUI enabled)..."
     mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
-    cmake .. || { echo "ERROR: CMake configuration failed."; exit 1; }
+    cmake .. -DUMR_ENABLE_GUI=ON || { echo "ERROR: CMake configuration failed."; exit 1; }
     make -j$(nproc) || { echo "ERROR: make failed."; exit 1; }
     sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
 else
     echo "ERROR: No CMakeLists.txt found. Manual fallback:"
     echo "  cd /tmp/umr && mkdir build && cd build"
-    echo "  cmake .. && make -j$(nproc) && sudo make install"
+    echo "  cmake .. -DUMR_ENABLE_GUI=ON && make -j$(nproc) && sudo make install"
     exit 1
 fi
 echo "  ✅ UMR installed."
