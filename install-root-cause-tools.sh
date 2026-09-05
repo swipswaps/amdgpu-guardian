@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Installs all deps, builds UMR with CMake.
+# install-root-cause-tools.sh – Fully comprehensive, builds with CMake.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Deps)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Comp)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -24,14 +24,27 @@ if ! grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
 fi
 
 # ------------------------------------------------------------------
-# 1. Install all dnf packages (including missing deps)
+# 1. Install all known build dependencies
 # ------------------------------------------------------------------
-echo "[1] Installing dnf packages (including ncurses-devel)..."
-sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build ncurses-devel zlib-devel libdrm-devel
-sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build ncurses-devel zlib-devel libdrm-devel rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
+echo "[1] Installing all build dependencies..."
+sudo dnf install -y \
+    rocm-smi radeontop nvtop trace-cmd perf \
+    git make gcc g++ cmake python3 sqlite3 \
+    autoconf automake libtool meson ninja-build \
+    ncurses-devel zlib-devel libdrm-devel \
+    llvm-devel clang llvm-toolset
+
+# Skip unavailable ROCm packages (they are optional)
+sudo dnf install -y --skip-unavailable \
+    rocm-smi radeontop nvtop trace-cmd perf \
+    git make gcc g++ cmake python3 sqlite3 \
+    autoconf automake libtool meson ninja-build \
+    ncurses-devel zlib-devel libdrm-devel \
+    llvm-devel clang llvm-toolset \
+    rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – build with CMake (now with ncurses-devel)
+# 2. UMR – CMake build (now with LLVM)
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
@@ -49,8 +62,7 @@ if [ -f CMakeLists.txt ]; then
     make -j$(nproc) || { echo "ERROR: make failed."; exit 1; }
     sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
 else
-    echo "ERROR: No known build system found."
-    echo "Manual fallback steps:"
+    echo "ERROR: No CMakeLists.txt found. Manual fallback:"
     echo "  cd /tmp/umr && mkdir build && cd build"
     echo "  cmake .. && make -j$(nproc) && sudo make install"
     exit 1

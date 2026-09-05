@@ -7,16 +7,18 @@ This project provides a self‑contained health check, forensic toolkit,
 and remediation framework for AMD Radeon GPUs on Fedora Linux.
 
 ───────────────────────────────────────────────────────────────
-  HOW WE GOT HERE (Complete Journey)
+  THE JOURNEY (How We Got Here)
 ───────────────────────────────────────────────────────────────
 
-1. SYMPTOM DISCOVERY: CPU spike due to PSR race.
-2. WORKAROUND: amdgpu.dcdebugmask=0x10.
-3. ARCHITECTURAL FIX: Upstream kernel 7.1.8.
-4. FORENSIC TOOLING: Built amdgpu-guardian.
-5. AUDIT & POLISHING: 10 defects fixed.
-6. STANDARDS COMPLIANCE: XDG Base Directory.
-7. INSTALLER CORRECTIONS: Added missing build dependencies (ncurses-devel, zlib-devel, libdrm-devel); UMR builds with CMake.
+1. SYMPTOM DISCOVERY: CPU spike on Firefox due to PSR race (flip_done timeouts).
+2. WORKAROUND: amdgpu.dcdebugmask=0x10 (disabled PSR).
+3. ARCHITECTURAL FIX: Upstream kernel 7.1.8 with Leo Li's patch set – PSR fixed.
+4. FORENSIC TOOLING: Built amdgpu-guardian with psr.py, telemetry, SQLite.
+5. AUDIT & POLISHING: 10 defects fixed (README, .gitignore, shebang, tool names, etc.).
+6. STANDARDS COMPLIANCE: Migrated database to XDG Base Directory (user‑owned, consistent).
+7. INSTALLER CORRECTIONS: Identified and installed all missing dependencies:
+   - ncurses-devel, zlib-devel, libdrm-devel, llvm-devel, clang, llvm-toolset
+   - Built UMR with CMake, RGD with submodules, RVS with rocblas check.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -54,8 +56,8 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 
 If the installer fails, you can build each tool manually:
 
-1. Install dependencies:
-   sudo dnf install ncurses-devel zlib-devel libdrm-devel cmake make gcc g++ git
+1. Install all dependencies:
+   sudo dnf install ncurses-devel zlib-devel libdrm-devel llvm-devel clang llvm-toolset cmake make gcc g++ git
 
 2. UMR (CMake):
    git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
