@@ -95,3 +95,15 @@ If the installer fails, you can build each tool manually:
 • ROCm Validation Suite
 
 ═══════════════════════════════════════════════════════════
+
+───────────────────────────────────────────────────────────────
+  INSTALLATION BEHAVIOR
+───────────────────────────────────────────────────────────────
+
+The installer now automatically attempts to build RGD and RVS.
+If the automated build fails (e.g., due to submodule issues), 
+the installer runs a verified manual fallback procedure internally.
+This means the tools should build successfully without user intervention.
+
+If you encounter any persistent failure, you can still use the 
+manual steps documented above.

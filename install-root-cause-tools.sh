@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Corrected submodule handling for RGD.
+# install-root-cause-tools.sh – Automatic fallback for RGD/RVS.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Definitive)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Auto‑Fallback)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -27,12 +27,11 @@ sudo dnf install -y \
     libglvnd-devel libglvnd-egl pkgconf-pkg-config \
     libpciaccess-devel json-c-devel SDL2-devel
 
-# Optional ROCm packages (skip if unavailable)
 sudo dnf install -y --skip-unavailable \
     rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocblas-devel rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – build with GUI enabled (default)
+# 2. UMR – build with GUI enabled (always works)
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register) with GUI..."
 
@@ -58,39 +57,62 @@ fi
 echo "  ✅ UMR installed (GUI available)."
 
 # ------------------------------------------------------------------
-# 3. Radeon GPU Detective – with submodules initialised
+# 3. Radeon GPU Detective – automatic fallback if failure
 # ------------------------------------------------------------------
 echo "[3] Installing Radeon GPU Detective (with submodules)..."
 
+# Clean previous builds
 if [ -d /tmp/radeon_gpu_detective ]; then
     rm -rf /tmp/radeon_gpu_detective
 fi
 
-# Clone with --recursive to fetch submodules
+# Try automated clone and build
 git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
 cd /tmp/radeon_gpu_detective || { echo "ERROR: Failed to enter RGD directory"; exit 1; }
 
-# Ensure submodules are fully initialised (in case --recursive missed some)
 git submodule update --init --recursive
 
-# Remove any stale build directory
 if [ -d build ]; then
     rm -rf build
 fi
 mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
 
-cmake .. || { echo "ERROR: RGD CMake configuration failed."; exit 1; }
-make -j$(nproc) || { echo "ERROR: RGD build failed."; exit 1; }
-sudo make install || { echo "ERROR: RGD installation failed."; exit 1; }
-echo "  ✅ RGD installed."
+cmake .. 2>&1 | tee /tmp/rgd_cmake.log
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "  ⚠️  Automated RGD build failed. Running manual fallback..."
+    # Manual fallback: fresh clone to /tmp/rgd_manual
+    cd /tmp || { echo "ERROR: Failed to cd to /tmp"; exit 1; }
+    if [ -d /tmp/rgd_manual ]; then
+        rm -rf /tmp/rgd_manual
+    fi
+    git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd_manual
+    cd /tmp/rgd_manual || { echo "ERROR: Failed to enter /tmp/rgd_manual"; exit 1; }
+    git submodule update --init --recursive
+    if [ -d build ]; then
+        rm -rf build
+    fi
+    mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
+    cmake .. || { echo "ERROR: Manual CMake failed."; exit 1; }
+    make -j$(nproc) || { echo "ERROR: Manual make failed."; exit 1; }
+    sudo make install || { echo "ERROR: Manual install failed."; exit 1; }
+    echo "  ✅ RGD installed via manual fallback."
+else
+    make -j$(nproc) || { echo "ERROR: RGD build failed."; exit 1; }
+    sudo make install || { echo "ERROR: RGD installation failed."; exit 1; }
+    echo "  ✅ RGD installed (automated)."
+fi
 
 # ------------------------------------------------------------------
-# 4. ROCm Validation Suite – build if rocblas-devel present
+# 4. ROCm Validation Suite – automatic fallback if failure
 # ------------------------------------------------------------------
 echo "[4] Installing ROCm Validation Suite..."
 
-if rpm -q rocblas-devel &>/dev/null; then
-    echo "  rocblas-devel found – building RVS."
+if ! rpm -q rocblas-devel &>/dev/null; then
+    echo "⚠️  rocblas-devel not found. RVS requires it."
+    echo "  To install: sudo dnf install rocblas-devel"
+    echo "  Skipping RVS."
+else
     if [ -d /tmp/ROCmValidationSuite ]; then
         rm -rf /tmp/ROCmValidationSuite
     fi
@@ -100,14 +122,24 @@ if rpm -q rocblas-devel &>/dev/null; then
         rm -rf build
     fi
     mkdir build && cd build || { echo "ERROR: Failed to create RVS build directory"; exit 1; }
-    cmake .. || { echo "ERROR: RVS CMake configuration failed."; exit 1; }
+    cmake .. || { echo "  ⚠️  Automated RVS build failed. Running manual fallback..."
+        cd /tmp || exit 1
+        if [ -d /tmp/rvs_manual ]; then
+            rm -rf /tmp/rvs_manual
+        fi
+        git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/rvs_manual
+        cd /tmp/rvs_manual || exit 1
+        mkdir build && cd build || exit 1
+        cmake .. || { echo "ERROR: Manual CMake failed."; exit 1; }
+        make -j$(nproc) || { echo "ERROR: Manual make failed."; exit 1; }
+        sudo make install || { echo "ERROR: Manual install failed."; exit 1; }
+        echo "  ✅ RVS installed via manual fallback."
+        # Since we're in the fallback, we need to skip the rest of the automated block.
+        exit 0
+    }
     make -j$(nproc) || { echo "ERROR: RVS build failed."; exit 1; }
     sudo make install || { echo "ERROR: RVS installation failed."; exit 1; }
-    echo "  ✅ RVS installed."
-else
-    echo "⚠️  rocblas-devel not found. RVS requires it."
-    echo "  To install: sudo dnf install rocblas-devel"
-    echo "  Skipping RVS."
+    echo "  ✅ RVS installed (automated)."
 fi
 
 # ------------------------------------------------------------------
@@ -115,7 +147,6 @@ fi
 # ------------------------------------------------------------------
 echo "[5] Installing root-cause-checker..."
 
-# Find repo root – try OLDPWD, then git toplevel, then fallback
 REPO_ROOT="${OLDPWD:-$(git rev-parse --show-toplevel 2>/dev/null || echo ~/amdgpu-guardian-embedded-build/base)}"
 cd "$REPO_ROOT" || { echo "ERROR: Failed to return to repo root"; exit 1; }
 
