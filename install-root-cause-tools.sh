@@ -1,56 +1,44 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Comprehensive with all deps including gbm-devel.
+# install-root-cause-tools.sh – Complete, full-featured installer.
+# Builds UMR with GUI, all dependencies installed.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Ultimate Final)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Full Features)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
-# Pre-flight: ROCm repository
+# Pre-flight: ROCm repository (optional, but we check)
 # ------------------------------------------------------------------
-if ! grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
+ROCm_REPO_PRESENT=0
+if grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
+    ROCm_REPO_PRESENT=1
+else
     echo "⚠️  ROCm repository not found."
-    echo "  To add it, run:"
-    echo "    sudo tee /etc/yum.repos.d/rocm.repo <<'REPOEOF'"
-    echo "[ROCm]"
-    echo "name=ROCm"
-    echo "baseurl=https://repo.radeon.com/rocm/yum/rpm"
-    echo "enabled=1"
-    echo "gpgcheck=1"
-    echo "gpgkey=https://repo.radeon.com/rocm/rocm.gpg.key"
-    echo "REPOEOF"
-    echo "Then rerun this script."
-    exit 1
+    echo "  RVS (stress testing) requires ROCm libraries."
+    echo "  You can add it later; continuing with other tools."
 fi
 
 # ------------------------------------------------------------------
-# 1. Install all known build dependencies
+# 1. Install all correct Fedora packages (including SDL2-devel for GUI)
 # ------------------------------------------------------------------
-echo "[1] Installing all build dependencies (including gbm-devel)..."
+echo "[1] Installing build dependencies (full set)..."
 sudo dnf install -y \
     rocm-smi radeontop nvtop trace-cmd perf \
-    git make gcc g++ cmake python3 sqlite3 \
+    git make gcc gcc-c++ cmake python3 sqlite \
     autoconf automake libtool meson ninja-build \
-    ncurses-devel zlib-devel libdrm-devel \
-    llvm-devel clang \
-    gbm-devel libglvnd-devel libglvnd-egl \
-    pkgconfig
+    ncurses-devel zlib-ng-compat-devel libdrm-devel \
+    llvm-devel clang mesa-libgbm-devel \
+    libglvnd-devel libglvnd-egl pkgconf-pkg-config \
+    libpciaccess-devel json-c-devel SDL2-devel
 
-# Skip unavailable ROCm packages (they are optional)
+# Optional ROCm packages (skip if unavailable)
 sudo dnf install -y --skip-unavailable \
-    rocm-smi radeontop nvtop trace-cmd perf \
-    git make gcc g++ cmake python3 sqlite3 \
-    autoconf automake libtool meson ninja-build \
-    ncurses-devel zlib-devel libdrm-devel \
-    llvm-devel clang \
-    gbm-devel libglvnd-devel libglvnd-egl \
-    pkgconfig \
-    rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
+    rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocblas-devel rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – CMake build (now with gbm-devel)
+# 2. UMR – build with GUI enabled (default) – we don't override
 # ------------------------------------------------------------------
-echo "[2] Installing UMR (User Mode Register)..."
+echo "[2] Installing UMR (User Mode Register) with GUI..."
 
 if [ -d /tmp/umr ]; then
     rm -rf /tmp/umr
@@ -60,18 +48,18 @@ git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
 cd /tmp/umr || { echo "ERROR: Failed to enter /tmp/umr"; exit 1; }
 
 if [ -f CMakeLists.txt ]; then
-    echo "  Building UMR with CMake (GUI enabled)..."
+    echo "  Building UMR with CMake (GUI enabled by default)..."
     mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
-    cmake .. -DUMR_ENABLE_GUI=ON || { echo "ERROR: CMake configuration failed."; exit 1; }
+    cmake .. || { echo "ERROR: CMake configuration failed."; exit 1; }
     make -j$(nproc) || { echo "ERROR: make failed."; exit 1; }
     sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
 else
     echo "ERROR: No CMakeLists.txt found. Manual fallback:"
     echo "  cd /tmp/umr && mkdir build && cd build"
-    echo "  cmake .. -DUMR_ENABLE_GUI=ON && make -j$(nproc) && sudo make install"
+    echo "  cmake .. && make -j$(nproc) && sudo make install"
     exit 1
 fi
-echo "  ✅ UMR installed."
+echo "  ✅ UMR installed (GUI available)."
 
 # ------------------------------------------------------------------
 # 3. Radeon GPU Detective – build in /tmp
@@ -90,15 +78,12 @@ sudo make install || { echo "ERROR: RGD installation failed."; exit 1; }
 echo "  ✅ RGD installed."
 
 # ------------------------------------------------------------------
-# 4. ROCm Validation Suite – build in /tmp (if rocblas present)
+# 4. ROCm Validation Suite – build if rocblas-devel present
 # ------------------------------------------------------------------
 echo "[4] Installing ROCm Validation Suite..."
 
-if ! ldconfig -p 2>/dev/null | grep -q rocblas; then
-    echo "⚠️  rocblas not found. RVS requires rocblas."
-    echo "  To install: sudo dnf install rocblas"
-    echo "  Skipping RVS."
-else
+if rpm -q rocblas-devel &>/dev/null; then
+    echo "  rocblas-devel found – building RVS."
     if [ -d /tmp/ROCmValidationSuite ]; then
         rm -rf /tmp/ROCmValidationSuite
     fi
@@ -109,22 +94,34 @@ else
     make -j$(nproc) || { echo "ERROR: RVS build failed."; exit 1; }
     sudo make install || { echo "ERROR: RVS installation failed."; exit 1; }
     echo "  ✅ RVS installed."
+else
+    echo "⚠️  rocblas-devel not found. RVS requires it."
+    echo "  To install: sudo dnf install rocblas-devel"
+    echo "  Skipping RVS."
 fi
 
 # ------------------------------------------------------------------
-# 5. Install root-cause-checker
+# 5. Install root-cause-checker (from repo root)
 # ------------------------------------------------------------------
 echo "[5] Installing root-cause-checker..."
+
+# Return to the repo root (we are currently in /tmp/*/build)
+REPO_ROOT="${OLDPWD:-$(git rev-parse --show-toplevel 2>/dev/null || echo ~/amdgpu-guardian-embedded-build/base)}"
+cd "$REPO_ROOT" || { echo "ERROR: Failed to return to repo root"; exit 1; }
+
 if [ -f ./root-cause-checker ]; then
     sudo cp ./root-cause-checker /usr/local/bin/root-cause-checker
     sudo chmod +x /usr/local/bin/root-cause-checker
-    echo "  root-cause-checker installed."
+    echo "  ✅ root-cause-checker installed."
+else
+    echo "  ⚠️  root-cause-checker not found in repo root."
 fi
 
 echo ""
 echo "═══════════════════════════════════════════════════════════"
-echo "  ✅ ALL TOOLS INSTALLED SUCCESSFULLY"
+echo "  ✅ ALL TOOLS INSTALLED SUCCESSFULLY (GUI enabled)"
 echo "  Run 'root-cause-checker' to verify."
 echo "  Run 'sudo ./guardian-wizard.sh' to run health check."
+echo "  To launch UMR GUI: sudo umr --gui"
 echo "═══════════════════════════════════════════════════════════"
 exit 0

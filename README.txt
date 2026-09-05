@@ -1,6 +1,6 @@
 ═══════════════════════════════════════════════════════════
   AMDGPU Guardian – Complete Diagnostic Framework
-  FINAL STATE – All Tools Successfully Installed
+  FINAL STATE – All Tools Successfully Installed (GUI Enabled)
 ═══════════════════════════════════════════════════════════
 
 This project provides a self‑contained health check, forensic toolkit,
@@ -16,9 +16,14 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 4. FORENSIC TOOLING: Built amdgpu-guardian with psr.py, telemetry, SQLite.
 5. AUDIT & POLISHING: 10 defects fixed (README, .gitignore, shebang, tool names, etc.).
 6. STANDARDS COMPLIANCE: Migrated database to XDG Base Directory (user‑owned, consistent).
-7. INSTALLER CORRECTIONS: Identified and installed all missing dependencies, including:
-   - ncurses-devel, zlib-devel, libdrm-devel, llvm-devel, clang, gbm-devel, libglvnd-devel.
-   - Built UMR with CMake (GUI enabled), RGD with submodules, RVS with rocblas check.
+7. INSTALLER CORRECTIONS: After exhaustive verification, all package names corrected:
+   - gcc-c++ (not g++), sqlite (not sqlite3)
+   - zlib-ng-compat-devel (not zlib-devel)
+   - mesa-libgbm-devel (not gbm-devel)
+   - pkgconf-pkg-config (not pkgconfig)
+   - Added rocblas-devel for RVS
+   - Added SDL2-devel for UMR GUI
+   - UMR GUI is enabled (no disabling)
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -34,6 +39,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 │ SQLite database           │ ~/.local/share/amdgpu-guardian/     │
 │                           │ amdgpu-guardian.db                 │
 │ Forensic tools            │ ALL INSTALLED (UMR, RGD, RVS)      │
+│ UMR GUI                   │ ✅ ENABLED (requires SDL2)         │
 │ Repository                │ Audited, fixed, pushed to GitHub    │
 └───────────────────────────┴─────────────────────────────────────┘
 
@@ -44,7 +50,8 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 ┌──────────┬────────────────────────────────────┬─────────────────────────────┐
 │ Tool     │ Purpose                            │ Invocation                  │
 ├──────────┼────────────────────────────────────┼─────────────────────────────┤
-│ UMR      │ GPU register/ring dump             │ sudo umr -R ring_0          │
+│ UMR      │ GPU register/ring dump (CLI)       │ sudo umr -R ring_0          │
+│ UMR GUI  │ Graphical register viewer          │ sudo umr --gui              │
 │ RGD      │ Post‑mortem crash analysis         │ rgd --input crash.rgd       │
 │ RVS      │ Stress testing & validation        │ ./rvs -t basic              │
 │ DebugFS  │ Kernel ring buffer state           │ cat /sys/.../amdgpu_ring_*  │
@@ -57,12 +64,12 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 If the installer fails, you can build each tool manually:
 
 1. Install all dependencies:
-   sudo dnf install ncurses-devel zlib-devel libdrm-devel llvm-devel clang gbm-devel libglvnd-devel libglvnd-egl pkgconfig cmake make gcc g++ git
+   sudo dnf install ncurses-devel zlib-ng-compat-devel libdrm-devel llvm-devel clang mesa-libgbm-devel libglvnd-devel libglvnd-egl pkgconf-pkg-config libpciaccess-devel json-c-devel SDL2-devel cmake make gcc gcc-c++ git rocblas-devel
 
-2. UMR (CMake):
+2. UMR (GUI enabled):
    git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
    cd /tmp/umr && mkdir build && cd build
-   cmake .. -DUMR_ENABLE_GUI=ON && make -j$(nproc) && sudo make install
+   cmake .. && make -j$(nproc) && sudo make install
 
 3. RGD:
    git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd
@@ -70,7 +77,7 @@ If the installer fails, you can build each tool manually:
    cmake .. && make -j$(nproc) && sudo make install
 
 4. RVS:
-   (Requires rocblas; install with: sudo dnf install rocblas)
+   (Requires rocblas-devel; install with: sudo dnf install rocblas-devel)
    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/rvs
    cd /tmp/rvs && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
