@@ -1,6 +1,6 @@
 ═══════════════════════════════════════════════════════════
   AMDGPU Guardian – Complete Diagnostic Framework
-  DEFINITIVE STATE – All Tools Functionally Installed
+  DEFINITIVE STATE – All Tools Successfully Installed
 ═══════════════════════════════════════════════════════════
 
 This project provides a self‑contained health check, forensic toolkit,
@@ -16,7 +16,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 4. FORENSIC TOOLING: Built amdgpu-guardian.
 5. AUDIT & POLISHING: 10 defects fixed.
 6. STANDARDS COMPLIANCE: XDG Base Directory.
-7. INSTALLER CORRECTIONS: Fixed build methods with fallback for UMR (autotools).
+7. INSTALLER CORRECTIONS: UMR build with make, RGD with submodules, RVS with rocblas check.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE

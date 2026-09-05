@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Finally correct with fallback build for UMR.
+# install-root-cause-tools.sh – Finally correct: UMR builds with make.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Ultimate)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Working Final)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -31,7 +31,7 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – Build with autotools fallback
+# 2. UMR – Build with make
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
@@ -41,19 +41,9 @@ fi
 sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
 cd /opt/umr || { echo "ERROR: Failed to enter /opt/umr"; exit 1; }
 
-# Check if meson.build exists
-if [ -f meson.build ]; then
-    echo "  Using Meson build..."
-    meson setup build || { echo "ERROR: UMR Meson setup failed."; exit 1; }
-    ninja -C build || { echo "ERROR: UMR Meson build failed."; exit 1; }
-    sudo ninja -C build install || { echo "ERROR: UMR installation failed."; exit 1; }
-else
-    echo "  meson.build not found, using autotools fallback..."
-    autoreconf -i || { echo "ERROR: autoreconf failed."; exit 1; }
-    ./configure || { echo "ERROR: configure failed."; exit 1; }
-    make || { echo "ERROR: make failed."; exit 1; }
-    sudo make install || { echo "ERROR: make install failed."; exit 1; }
-fi
+echo "  Building UMR with make..."
+make || { echo "ERROR: UMR make failed."; exit 1; }
+sudo make install || { echo "ERROR: UMR installation failed."; exit 1; }
 echo "  ✅ UMR installed."
 
 # ------------------------------------------------------------------
