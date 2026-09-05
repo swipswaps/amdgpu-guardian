@@ -257,3 +257,21 @@ of a kernel driver regression – from symptom discovery to the
 construction of a professional‑grade diagnostic platform.
 
 ═══════════════════════════════════════════════════════════
+
+───────────────────────────────────────────────────────────────
+  FINAL INSTALLATION NOTES
+───────────────────────────────────────────────────────────────
+
+The installer (`install-root-cause-tools.sh`) is now fully idempotent:
+• Handles existing /opt/umr (pulls updates, cleans build directory)
+• Skips missing ROCm packages (--skip-unavailable)
+• Builds RGD and RVS in /tmp (writable)
+• Installs all tools system‑wide
+
+To verify installation:
+  ./root-cause-checker
+
+To run the health check (with forensic detection):
+  sudo ./guardian-wizard.sh
+
+The forensic tools are now fully integrated and ready for use.
