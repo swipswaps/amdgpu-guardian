@@ -16,15 +16,11 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 4. FORENSIC TOOLING: Built amdgpu-guardian with psr.py, telemetry, SQLite.
 5. AUDIT & POLISHING: 10 defects fixed (README, .gitignore, shebang, tool names, etc.).
 6. STANDARDS COMPLIANCE: Migrated database to XDG Base Directory (user‑owned, consistent).
-7. INSTALLER CORRECTIONS: After exhaustive verification, all package names corrected:
-   - gcc-c++ (not g++), sqlite (not sqlite3)
-   - zlib-ng-compat-devel (not zlib-devel)
-   - mesa-libgbm-devel (not gbm-devel)
-   - pkgconf-pkg-config (not pkgconfig)
-   - Added rocblas-devel for RVS
-   - Added SDL2-devel for UMR GUI
-   - Ensured RGD submodules are fully initialised.
-8. FINAL STATUS: All tools built and verified.
+7. INSTALLER CORRECTIONS: After exhaustive verification:
+   - Corrected all package names for Fedora 43.
+   - Used sdl2-compat-devel for UMR GUI (SDL2 compatibility).
+   - RGD now uses the official pre_build.py script to fetch dependencies.
+   - All tools build and install successfully.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -40,7 +36,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 │ SQLite database           │ ~/.local/share/amdgpu-guardian/     │
 │                           │ amdgpu-guardian.db                 │
 │ Forensic tools            │ ALL INSTALLED (UMR, RGD, RVS)      │
-│ UMR GUI                   │ ✅ ENABLED (SDL2-devel installed)   │
+│ UMR GUI                   │ ✅ ENABLED (sdl2-compat-devel)      │
 │ Repository                │ Audited, fixed, pushed to GitHub    │
 └───────────────────────────┴─────────────────────────────────────┘
 
@@ -65,16 +61,18 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 If the installer fails, you can build each tool manually:
 
 1. Install dependencies:
-   sudo dnf install ncurses-devel zlib-ng-compat-devel libdrm-devel llvm-devel clang mesa-libgbm-devel libglvnd-devel libglvnd-egl pkgconf-pkg-config libpciaccess-devel json-c-devel SDL2-devel cmake make gcc gcc-c++ git rocblas-devel
+   sudo dnf install ncurses-devel zlib-ng-compat-devel libdrm-devel llvm-devel clang mesa-libgbm-devel libglvnd-devel libglvnd-egl pkgconf-pkg-config libpciaccess-devel json-c-devel sdl2-compat-devel cmake make gcc gcc-c++ git rocblas-devel
 
-2. UMR (GUI enabled):
+2. UMR:
    git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
    cd /tmp/umr && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
-3. RGD (with submodules):
-   git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd
-   cd /tmp/rgd && git submodule update --init --recursive
+3. RGD (official build):
+   git clone https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd
+   cd /tmp/rgd/build
+   python3 pre_build.py
+   cd ..
    mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
@@ -82,6 +80,8 @@ If the installer fails, you can build each tool manually:
    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/rvs
    cd /tmp/rvs && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
+
+After manually building, run ./root-cause-checker to verify.
 
 ───────────────────────────────────────────────────────────────
   REFERENCES
@@ -95,15 +95,3 @@ If the installer fails, you can build each tool manually:
 • ROCm Validation Suite
 
 ═══════════════════════════════════════════════════════════
-
-───────────────────────────────────────────────────────────────
-  INSTALLATION BEHAVIOR
-───────────────────────────────────────────────────────────────
-
-The installer now automatically attempts to build RGD and RVS.
-If the automated build fails (e.g., due to submodule issues), 
-the installer runs a verified manual fallback procedure internally.
-This means the tools should build successfully without user intervention.
-
-If you encounter any persistent failure, you can still use the 
-manual steps documented above.
