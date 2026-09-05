@@ -1,6 +1,6 @@
 ═══════════════════════════════════════════════════════════
   AMDGPU Guardian – Complete Diagnostic Framework
-  FINAL STATE – All Tools Successfully Installed (GUI Enabled)
+  FINAL STATE – All Tools Successfully Installed
 ═══════════════════════════════════════════════════════════
 
 This project provides a self‑contained health check, forensic toolkit,
@@ -10,20 +10,13 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
   THE JOURNEY (How We Got Here)
 ───────────────────────────────────────────────────────────────
 
-1. SYMPTOM DISCOVERY: CPU spike on Firefox due to PSR race (flip_done timeouts).
-2. WORKAROUND: amdgpu.dcdebugmask=0x10 (disabled PSR).
-3. ARCHITECTURAL FIX: Upstream kernel 7.1.8 with Leo Li's patch set – PSR fixed.
-4. FORENSIC TOOLING: Built amdgpu-guardian with psr.py, telemetry, SQLite.
-5. AUDIT & POLISHING: 10 defects fixed (README, .gitignore, shebang, tool names, etc.).
-6. STANDARDS COMPLIANCE: Migrated database to XDG Base Directory (user‑owned, consistent).
-7. INSTALLER CORRECTIONS: After exhaustive verification, all package names corrected:
-   - gcc-c++ (not g++), sqlite (not sqlite3)
-   - zlib-ng-compat-devel (not zlib-devel)
-   - mesa-libgbm-devel (not gbm-devel)
-   - pkgconf-pkg-config (not pkgconfig)
-   - Added rocblas-devel for RVS
-   - Added SDL2-devel for UMR GUI
-   - UMR GUI is enabled (no disabling)
+1. SYMPTOM DISCOVERY: CPU spike on Firefox due to PSR race.
+2. WORKAROUND: amdgpu.dcdebugmask=0x10.
+3. ARCHITECTURAL FIX: Upstream kernel 7.1.8.
+4. FORENSIC TOOLING: Built amdgpu-guardian.
+5. AUDIT & POLISHING: 10 defects fixed.
+6. STANDARDS COMPLIANCE: XDG Base Directory.
+7. INSTALLER CORRECTIONS: All deps installed, build directories cleaned, GUI works.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -39,7 +32,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 │ SQLite database           │ ~/.local/share/amdgpu-guardian/     │
 │                           │ amdgpu-guardian.db                 │
 │ Forensic tools            │ ALL INSTALLED (UMR, RGD, RVS)      │
-│ UMR GUI                   │ ✅ ENABLED (requires SDL2)         │
+│ UMR GUI                   │ ✅ ENABLED (SDL2-devel installed)   │
 │ Repository                │ Audited, fixed, pushed to GitHub    │
 └───────────────────────────┴─────────────────────────────────────┘
 
@@ -50,8 +43,8 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 ┌──────────┬────────────────────────────────────┬─────────────────────────────┐
 │ Tool     │ Purpose                            │ Invocation                  │
 ├──────────┼────────────────────────────────────┼─────────────────────────────┤
-│ UMR      │ GPU register/ring dump (CLI)       │ sudo umr -R ring_0          │
-│ UMR GUI  │ Graphical register viewer          │ sudo umr --gui              │
+│ UMR CLI  │ GPU register/ring dump             │ sudo umr -R ring_0          │
+│ UMR GUI  │ Graphical register viewer          │ XDG_RUNTIME_DIR=/run/user/$(id -u) sudo -E umr --gui │
 │ RGD      │ Post‑mortem crash analysis         │ rgd --input crash.rgd       │
 │ RVS      │ Stress testing & validation        │ ./rvs -t basic              │
 │ DebugFS  │ Kernel ring buffer state           │ cat /sys/.../amdgpu_ring_*  │
@@ -63,7 +56,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 
 If the installer fails, you can build each tool manually:
 
-1. Install all dependencies:
+1. Install dependencies:
    sudo dnf install ncurses-devel zlib-ng-compat-devel libdrm-devel llvm-devel clang mesa-libgbm-devel libglvnd-devel libglvnd-egl pkgconf-pkg-config libpciaccess-devel json-c-devel SDL2-devel cmake make gcc gcc-c++ git rocblas-devel
 
 2. UMR (GUI enabled):
@@ -73,13 +66,12 @@ If the installer fails, you can build each tool manually:
 
 3. RGD:
    git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd
-   cd /tmp/rgd && mkdir build && cd build
+   cd /tmp/rgd && rm -rf build && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
-4. RVS:
-   (Requires rocblas-devel; install with: sudo dnf install rocblas-devel)
+4. RVS (requires rocblas-devel):
    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/rvs
-   cd /tmp/rvs && mkdir build && cd build
+   cd /tmp/rvs && rm -rf build && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
 ───────────────────────────────────────────────────────────────
