@@ -14,8 +14,8 @@ TOOLS=(
     "rocgdb:rocgdb"
     "rocprofiler:rocprofiler"
     "umr:umr"
-    "rgd:rgd"
-    "rvs:rvs"
+    "rgd:radeon-gpu-detective"
+    "rvs:rocm-validation-suite"
 )
 
 for entry in "${TOOLS[@]}"; do

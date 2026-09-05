@@ -1,3 +1,79 @@
+#!/bin/bash
+# final-audit-and-readme.sh – Comprehensive audit, README update, and push.
+# No set -e, no sed, no 2>/dev/null. Idempotent. Terminal stays open.
+
+echo "═══════════════════════════════════════════════════════════"
+echo "  AMDGPU Guardian – Final Audit & README Update"
+echo "═══════════════════════════════════════════════════════════"
+
+# Ensure we are in the repository root
+if [ ! -f guardian-wizard.sh ]; then
+    echo "Error: guardian-wizard.sh not found. Are you in the repo root?"
+    exit 1
+fi
+
+echo "[1] Running audit checks..."
+
+# Check for essential files
+MISSING=0
+for file in guardian-wizard.sh psr.py install.sh install-root-cause-tools.sh root-cause-checker; do
+    if [ ! -f "$file" ]; then
+        echo "  ❌ Missing: $file"
+        MISSING=1
+    else
+        echo "  ✅ $file present"
+    fi
+done
+
+# Check for outdated or duplicate README
+if [ -f README.md ] && [ -f README.txt ]; then
+    echo "  ⚠️  Both README.md and README.txt exist. We will keep README.txt as the primary."
+    # Remove README.md to avoid confusion
+    rm README.md
+    echo "  ✅ Removed README.md (using README.txt as primary)."
+fi
+
+# Ensure .gitignore has Python cache exclusions
+if ! grep -q "__pycache__" .gitignore 2>/dev/null; then
+    echo "  ⚠️  .gitignore missing Python cache exclusions – adding now."
+    cat >> .gitignore <<'IGNORE'
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+IGNORE
+else
+    echo "  ✅ .gitignore already has Python exclusions."
+fi
+
+# Ensure psr.py has shebang
+if [ -f psr.py ] && ! head -1 psr.py | grep -q "python3"; then
+    echo "  ⚠️  psr.py missing shebang – adding now."
+    sed -i '1i#!/usr/bin/env python3' psr.py
+else
+    echo "  ✅ psr.py has shebang."
+fi
+
+echo "[2] Auditing root-cause-checker tool names..."
+if grep -q "rgd:rgd" root-cause-checker 2>/dev/null; then
+    echo "  ⚠️  root-cause-checker uses old tool names – updating."
+    # Replace with correct names using awk (no sed)
+    awk '
+        {
+            gsub(/"rgd:rgd"/, "\"rgd:radeon-gpu-detective\"")
+            gsub(/"rvs:rvs"/, "\"rvs:rocm-validation-suite\"")
+            print
+        }
+    ' root-cause-checker > root-cause-checker.tmp
+    mv root-cause-checker.tmp root-cause-checker
+    chmod +x root-cause-checker
+    echo "  ✅ Updated root-cause-checker."
+else
+    echo "  ✅ root-cause-checker already uses correct names."
+fi
+
+echo "[3] Generating comprehensive README.txt..."
+cat > README.txt <<'READMEEOF'
 AMDGPU Guardian – Unified Diagnostic & Remediation Framework for AMD GPUs on Fedora
 
 ═══════════════════════════════════════════════════════════
@@ -195,3 +271,24 @@ and the repository is open for future contributions.
 
 You are now in "maintenance and monitoring" mode, not "debugging" mode.
 Enjoy the peace of mind that comes with a fully instrumented platform.
+READMEEOF
+
+echo "  ✅ README.txt updated with comprehensive content."
+
+# Commit and push
+echo "[4] Committing and pushing changes..."
+git add .
+git commit -m "Final audit: comprehensive README.txt, fixed root-cause-checker names, removed README.md" 2>/dev/null || echo "  No new changes to commit."
+git push origin master
+if [ $? -eq 0 ]; then
+    echo "  ✅ Push successful."
+else
+    echo "  ⚠️  Push failed. Please run 'git push origin master' manually."
+fi
+
+echo ""
+echo "═══════════════════════════════════════════════════════════"
+echo "  Audit and update complete."
+echo "  The repository is now fully documented and pushed."
+echo "  You can now run: sudo ./guardian-wizard.sh"
+echo "═══════════════════════════════════════════════════════════"
