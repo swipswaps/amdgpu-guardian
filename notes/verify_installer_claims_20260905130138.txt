@@ -1,0 +1,182 @@
+=== verify_installer_claims.sh — 20260905130138 UTC ===
+repo: swipswaps/amdgpu-guardian   branch: master
+
+=== A. HOST ===
+Linux fedora 7.1.8-100.fc43.x86_64 #1 SMP PREEMPT_DYNAMIC Mon Aug 10 03:32:13 UTC 2026 x86_64 GNU/Linux
+Fedora release 43 (Forty Three)
+dnf5 version 5.2.18.0
+dnf5 plugin API version 2.0
+
+=== B. GIT STATE (branch hardcoded as "master" in ultimate-final.sh) ===
+current branch: master
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/main
+  remotes/origin/master
+pre-commit hook present? no
+root-cause-checker in repo root? YES (step 5 still cannot see it — cwd is /tmp/*/build)
+
+=== C. ROCm REPO GATE ===
+backup_2026-03-30_120738
+backup_2026-03-30_120836
+backup_2026-03-30_121011
+backup_2026-03-30_121314
+backup_2026-03-30_121542
+backup_2026-03-30_121803
+backup_2026-03-30_122838
+backup_2026-03-30_124032
+backup_2026-03-30_124142
+fedora-recovery.repo
+rocm.repo
+rpmfusion-free.repo
+rpmfusion-free-updates.repo
+rpmfusion-free-updates-testing.repo
+teamviewer.repo;6a80ebe0
+timescale_timescaledb.repo
+--- files mentioning repo.radeon.com/rocm ---
+/etc/yum.repos.d/rocm.repo
+(no output above means the gate exits 1 and NOTHING installs)
+
+=== D. PACKAGE NAME RESOLUTION ===
+  AVAILABLE  : rocm-smi               -> rocm-smi.x86_64
+  AVAILABLE  : radeontop              -> radeontop.x86_64
+  AVAILABLE  : nvtop                  -> nvtop.x86_64
+  AVAILABLE  : trace-cmd              -> trace-cmd.x86_64
+  AVAILABLE  : perf                   -> perf.x86_64
+  AVAILABLE  : git                    -> git.x86_64
+  AVAILABLE  : make                   -> make.x86_64
+  AVAILABLE  : gcc                    -> gcc.x86_64
+  AVAILABLE  : gcc-c++                -> gcc-c++.i686gcc-c++.x86_64
+  NO MATCH   : g++                     <-- dnf aborts the transaction on this
+  AVAILABLE  : cmake                  -> cmake.i686cmake.x86_64
+  AVAILABLE  : python3                -> python3.i686python3.x86_64
+  AVAILABLE  : sqlite                 -> sqlite.i686sqlite.x86_64
+  NO MATCH   : sqlite3                 <-- dnf aborts the transaction on this
+  AVAILABLE  : autoconf               -> autoconf.noarch
+  AVAILABLE  : automake               -> automake.noarch
+  AVAILABLE  : libtool                -> libtool.x86_64
+  AVAILABLE  : meson                  -> meson.noarch
+  AVAILABLE  : ninja-build            -> ninja-build.x86_64
+  AVAILABLE  : ncurses-devel          -> ncurses-devel.i686ncurses-devel.x86_64
+  NO MATCH   : zlib-devel              <-- dnf aborts the transaction on this
+  AVAILABLE  : libdrm-devel           -> libdrm-devel.i686libdrm-devel.x86_64
+  AVAILABLE  : llvm-devel             -> llvm-devel.i686llvm-devel.x86_64
+  AVAILABLE  : clang                  -> clang.i686clang.x86_64
+  NO MATCH   : gbm-devel               <-- dnf aborts the transaction on this
+  NO MATCH   : libgbm-devel            <-- dnf aborts the transaction on this
+  AVAILABLE  : mesa-libgbm-devel      -> mesa-libgbm-devel.i686mesa-libgbm-devel.x86_64
+  AVAILABLE  : libglvnd-devel         -> libglvnd-devel.i686libglvnd-devel.x86_64
+  AVAILABLE  : libglvnd-egl           -> libglvnd-egl.i686libglvnd-egl.x86_64
+  NO MATCH   : pkgconfig               <-- dnf aborts the transaction on this
+  AVAILABLE  : libpciaccess-devel     -> libpciaccess-devel.i686libpciaccess-devel.x86_64
+  AVAILABLE  : json-c-devel           -> json-c-devel.i686json-c-devel.x86_64
+  NO MATCH   : SDL2-devel              <-- dnf aborts the transaction on this
+  AVAILABLE  : rocblas                -> rocblas.x86_64
+  AVAILABLE  : rocblas-devel          -> rocblas-devel.x86_64
+
+--- what actually provides gbm.pc on this host ---
+Updating and loading repositories:
+ RPM Fusion for Fedora 43 - Free - Upda 100% | 116.5 KiB/s | 367.5 KiB |  00m03s
+ RPM Fusion for Fedora 43 - Free        100% |  35.3 KiB/s | 597.1 KiB |  00m17s
+ ROCm                                   100% | 204.0   B/s |   3.4 KiB |  00m17s
+ timescale_timescaledb                  100% |  12.9 KiB/s | 242.9 KiB |  00m19s
+ Fedora 43 - x86_64 - Updates           100% |   1.6 MiB/s |  37.0 MiB |  00m23s
+ Fedora 43 - x86_64                     100% |   2.0 MiB/s |  57.6 MiB |  00m28s
+Repositories loaded.
+mesa-libgbm-devel-25.3.6-3.fc43.i686 : Mesa libgbm development package
+Repo         : updates
+Matched From : 
+Filename     : /usr/lib/pkgconfig/gbm.pc
+
+mesa-libgbm-devel-25.3.6-3.fc43.x86_64 : Mesa libgbm development package
+Repo         : updates
+Matched From : 
+Filename     : /usr/lib64/pkgconfig/gbm.pc
+
+mesa-libgbm-devel-25.2.4-2.fc43.i686 : Mesa libgbm development package
+Repo         : fedora
+Matched From : 
+Filename     : /usr/lib/pkgconfig/gbm.pc
+
+mesa-libgbm-devel-25.2.4-2.fc43.x86_64 : Mesa libgbm development package
+Repo         : fedora
+Matched From : 
+Filename     : /usr/lib64/pkgconfig/gbm.pc
+
+
+=== E. UMR CMAKE OPTIONS AND DEPENDENCIES ===
+Cloning into '/tmp/umr_probe_20260905130138'...
+--- option() declarations (is UMR_ENABLE_GUI real?) ---
+61:option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+62:option(UMR_NO_DRM "Disable libdrm functions to read memory stats (disables server and GUI)" OFF)
+63:option(UMR_NO_LLVM "Disable LLVM shader disasm functions, suggested for LLVM < 7" OFF)
+64:option(UMR_STATIC_EXECUTABLE "Build a static executable" OFF)
+65:option(UMR_STATIC_LLVM "Force using static LLVM libraries instead of preferring dynamic" OFF)
+66:option(UMR_NO_GUI "Disable umr --gui option" OFF)
+67:option(UMR_NO_SERVER "Disable umr --server option" ${UMR_NO_GUI})
+68:option(UMR_INSTALL_DEV "Install the development headers and static library" OFF)
+69:option(UMR_INSTALL_TEST "Install the umr test application" OFF)
+75:cmake_dependent_option(UMR_GUI "Enable umr --gui option" ON "NOT UMR_NO_GUI" OFF)
+76:cmake_dependent_option(UMR_SERVER "Enable umr --server option" ON "NOT UMR_NO_SERVER" OFF)
+--- UMR_ENABLE_GUI anywhere in the tree? ---
+NOT FOUND — -DUMR_ENABLE_GUI=ON is a silent no-op
+--- declared dependencies ---
+53:find_package(Threads REQUIRED)
+55:find_package(Curses REQUIRED)
+58:find_package(PCIAccess REQUIRED)
+97:  find_package(PkgConfig REQUIRED)
+98:  pkg_check_modules(DRM IMPORTED_TARGET REQUIRED libdrm)
+99:  pkg_check_modules(DRM_AMDGPU IMPORTED_TARGET REQUIRED libdrm_amdgpu)
+106:  find_package(LLVM REQUIRED COMPONENTS all)
+137:      find_package(OpenGL COMPONENTS EGL OpenGL)
+138:      pkg_check_modules(GBM IMPORTED_TARGET gbm)
+144:        find_package(OpenGL COMPONENTS OpenGL)
+162:  find_package(SDL3)
+167:    find_package(SDL2)
+
+=== F. RGD INSTALL TARGET ===
+Cloning into '/tmp/rgd_probe_20260905130138'...
+--- top-level build files ---
+build
+Buildinfo.properties.in
+_clang-format
+CMakeLists.txt
+documentation
+external
+License.txt
+README.md
+RGD_NOTICES.txt
+RGD_RELEASE_NOTES.txt
+samples
+source
+test
+--- install() rules (absent => "sudo make install" fails) ---
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:119:install(TARGETS radeon_gpu_detective_cli
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:124:install(FILES RGD_NOTICES.txt
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:127:install(FILES README.md
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:130:install(FILES RGD_RELEASE_NOTES.txt
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:133:install(DIRECTORY documentation/build/rgd
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:136:install(DIRECTORY samples
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:142:    install(FILES external/amd_gpu_dis/Lib/VS2022/x64/amdgpu_dis.dll
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:145:    install(FILES $<TARGET_FILE:comgr_plugin>
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:148:    install(FILES external/third_party/DXC/bin/x64/dxc.exe
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:152:    install(FILES ${AMDGPU_DIS_SHAREDLIB}
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:155:    install(FILES $<TARGET_FILE:comgr_plugin>
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:158:    install(FILES external/third_party/DXC/bin/dxc
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:164:install(FILES external/isa_spec_xml/amdgpu_isa_rdna3.xml
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:171:install(TARGETS rgd_test
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:176:install(TARGETS radeon_gpu_detective_cli
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:181:install(FILES test/README.md
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:185:install(DIRECTORY test/scripts/input_description_files
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:189:install(FILES test/scripts/TestRunner.py
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:193:install(FILES test/scripts/JsonTests.py
+/tmp/rgd_probe_20260905130138/CMakeLists.txt:199:    install(FILES external/amd_gpu_dis/Lib/VS2022/x64/amdgpu_dis.dll
+
+=== G. RVS GATE (installer tests runtime lib, not headers) ===
+--- ldconfig view (what the installer checks) ---
+	librocblas.so.4 (libc6,x86-64) => /lib64/librocblas.so.4
+--- headers actually required to build (what it does NOT check) ---
+package rocblas-devel is not installed
+ls: cannot access '/opt/rocm/include/rocblas': No such file or directory
+
+=== END DIAGNOSTIC ===
