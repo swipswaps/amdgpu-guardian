@@ -1,78 +1,86 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Corrected idempotent installer for UMR, RGD, RVS.
-# Builds UMR with Meson, RGD/RVS with CMake in /tmp.
-# Pre-flight check for ROCm repository.
+# install-root-cause-tools.sh – Corrected installer for UMR, RGD, RVS
+# Uses Meson for UMR, CMake for RGD/RVS. Idempotent. Run with sudo.
 
 set -e  # only for this script
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Corrected)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
-# Pre-flight: Check for ROCm repository
-# ------------------------------------------------------------------
-if ! grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
-    echo "⚠️  ROCm repository not found."
-    echo "  To add it, run:"
-    echo "    sudo tee /etc/yum.repos.d/rocm.repo <<'REPOEOF'"
-    echo "[ROCm]"
-    echo "name=ROCm"
-    echo "baseurl=https://repo.radeon.com/rocm/yum/rpm"
-    echo "enabled=1"
-    echo "gpgcheck=1"
-    echo "gpgkey=https://repo.radeon.com/rocm/rocm.gpg.key"
-    echo "REPOEOF"
-    echo ""
-    echo "Then rerun this script."
-    exit 1
-fi
-
-# ------------------------------------------------------------------
-# 1. Install dnf packages
+# 1. Install dnf packages (ROCM repo required for some)
 # ------------------------------------------------------------------
 echo "[1] Installing dnf packages..."
 sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build
-sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb
+# Some may not be available; skip errors
+sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build
 
 # ------------------------------------------------------------------
-# 2. UMR – Meson build
+# 2. UMR – Meson build (correct)
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
-sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
+
+if [ ! -d /opt/umr ]; then
+    sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
+fi
 cd /opt/umr || exit
-sudo meson setup build --reconfigure
+sudo git pull --rebase 2>/dev/null
+
+# Build with Meson
+if [ ! -d build ]; then
+    sudo meson setup build
+fi
 sudo ninja -C build
 sudo ninja -C build install
 
 # ------------------------------------------------------------------
-# 3. Radeon GPU Detective – CMake build in /tmp
+# 3. Radeon GPU Detective (RGD) – CMake build in /tmp
 # ------------------------------------------------------------------
 echo "[3] Installing Radeon GPU Detective..."
-git clone https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
+
+# Clone to /tmp (writable)
+if [ ! -d /tmp/radeon_gpu_detective ]; then
+    git clone https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
+fi
 cd /tmp/radeon_gpu_detective || exit
-mkdir -p build && cd build
+git pull --rebase 2>/dev/null
+
+# Build in /tmp/build
+if [ -d build ]; then
+    rm -rf build
+fi
+mkdir build && cd build || exit
 cmake ..
 make -j$(nproc)
 sudo make install
 
 # ------------------------------------------------------------------
-# 4. ROCm Validation Suite – CMake build in /tmp
+# 4. ROCm Validation Suite (RVS) – CMake build in /tmp
 # ------------------------------------------------------------------
 echo "[4] Installing ROCm Validation Suite..."
-git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/ROCmValidationSuite
+
+if [ ! -d /tmp/ROCmValidationSuite ]; then
+    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/ROCmValidationSuite
+fi
 cd /tmp/ROCmValidationSuite || exit
-mkdir -p build && cd build
+git pull --rebase 2>/dev/null
+
+if [ -d build ]; then
+    rm -rf build
+fi
+mkdir build && cd build || exit
 cmake ..
 make -j$(nproc)
 sudo make install
 
 # ------------------------------------------------------------------
-# 5. Install root-cause-checker
+# 5. Copy root-cause-checker to /usr/local/bin (if present)
 # ------------------------------------------------------------------
-echo "[5] Installing root-cause-checker..."
-sudo cp ./root-cause-checker /usr/local/bin/root-cause-checker
-sudo chmod +x /usr/local/bin/root-cause-checker
+if [ -f ./root-cause-checker ]; then
+    sudo cp ./root-cause-checker /usr/local/bin/root-cause-checker
+    sudo chmod +x /usr/local/bin/root-cause-checker
+fi
 
 echo ""
 echo "═══════════════════════════════════════════════════════════"

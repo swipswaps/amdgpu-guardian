@@ -105,6 +105,59 @@ if [ "$FLIP_STATUS" = "FAIL" ]; then
   fi
 else
   echo -e "  ${GREEN}✓ No critical errors detected. Driver is operationally stable.${NC}"
+
+
+# ------------------------------------------------------------------
+# FORENSIC TOOL STATUS
+# ------------------------------------------------------------------
+echo ""
+echo "═══════════════════════════════════════════════════════════"
+echo "  FORENSIC TOOL STATUS"
+echo "═══════════════════════════════════════════════════════════"
+
+if command -v umr &>/dev/null; then
+    echo "  ✅ UMR (register debugger) – installed"
+    UMR_INSTALLED=1
+else
+    echo "  ❌ UMR (register debugger) – not installed"
+    UMR_INSTALLED=0
+fi
+
+if command -v radeon-gpu-detective &>/dev/null || command -v rgd &>/dev/null; then
+    echo "  ✅ RGD (post-mortem) – installed"
+    RGD_INSTALLED=1
+else
+    echo "  ❌ RGD (post-mortem) – not installed"
+    RGD_INSTALLED=0
+fi
+
+if command -v rvs &>/dev/null || command -v rocm-validation-suite &>/dev/null; then
+    echo "  ✅ RVS (stress testing) – installed"
+    RVS_INSTALLED=1
+else
+    echo "  ❌ RVS (stress testing) – not installed"
+    RVS_INSTALLED=0
+fi
+
+if [ $UMR_INSTALLED -eq 0 ] || [ $RGD_INSTALLED -eq 0 ] || [ $RVS_INSTALLED -eq 0 ]; then
+    echo ""
+    echo "  ⚠️  Some forensic tools are missing."
+    echo "  To install all tools, run:"
+    echo "    ./install-root-cause-tools.sh"
+fi
+
+if [ "$FLIP_STATUS" = "FAIL" ]; then
+    echo ""
+    echo "═══════════════════════════════════════════════════════════"
+    echo "  FORENSIC RECOMMENDATIONS (Critical Error Detected)"
+    echo "═══════════════════════════════════════════════════════════"
+    echo "  1. Dump GPU ring buffer: sudo umr -R ring_0"
+    echo "  2. Dump VRAM: sudo umr -r -o vram.bin"
+    echo "  3. If crash dump exists: rgd --input crash.rgd --output report.txt"
+    echo "  4. Check kernel debugfs: cat /sys/kernel/debug/dri/0/amdgpu_ring_gfx"
+fi
+echo "═══════════════════════════════════════════════════════════"
+
   if [ -n "$CURRENT_MASK" ]; then
     echo -e "  ${YELLOW}Note: Debugmask is active unnecessarily. Consider removing it.${NC}"
   fi
