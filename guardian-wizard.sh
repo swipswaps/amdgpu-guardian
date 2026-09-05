@@ -82,8 +82,8 @@ fi
 
 if command -v sqlite3 &>/dev/null; then
   DB_FILE="${HOME}/.amdgpu-guardian.db"
-  mkdir -p "$(dirname "$DB_FILE")"
-  sqlite3 "$DB_FILE" "CREATE TABLE IF NOT EXISTS boots (
+  mkdir -p "$(dirname "$DB_PATH")"
+  sqlite3 "$DB_PATH" "CREATE TABLE IF NOT EXISTS boots (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     kernel TEXT,
@@ -92,9 +92,9 @@ if command -v sqlite3 &>/dev/null; then
     vendor_warnings INTEGER,
     param_active TEXT
   );"
-  sqlite3 "$DB_FILE" "INSERT INTO boots (kernel, flip_errors, ta_warnings, vendor_warnings, param_active)
+  sqlite3 "$DB_PATH" "INSERT INTO boots (kernel, flip_errors, ta_warnings, vendor_warnings, param_active)
     VALUES ('$KERNEL_VER', $FLIP_COUNT, $TA_COUNT, $VENDOR_COUNT, '$CURRENT_MASK');"
-  echo -e "\n${YELLOW}[PERSISTENCE]${NC} State logged to SQLite: $DB_FILE"
+  echo -e "\n${YELLOW}[PERSISTENCE]${NC} State logged to SQLite: $DB_PATH"
 fi
 
 echo -e "\n${GREEN}═══════════════════════════════════════════════════════════${NC}"
