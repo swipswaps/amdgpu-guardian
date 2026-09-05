@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Handles build directory cleanup.
+# install-root-cause-tools.sh – Corrected submodule handling for RGD.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Working)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Definitive)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -15,9 +15,9 @@ if ! grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
 fi
 
 # ------------------------------------------------------------------
-# 1. Install all correct Fedora packages (including SDL2-devel for GUI)
+# 1. Install all correct Fedora packages (from verification report)
 # ------------------------------------------------------------------
-echo "[1] Installing build dependencies (full set)..."
+echo "[1] Installing build dependencies (correct package names)..."
 sudo dnf install -y \
     rocm-smi radeontop nvtop trace-cmd perf \
     git make gcc gcc-c++ cmake python3 sqlite \
@@ -58,17 +58,22 @@ fi
 echo "  ✅ UMR installed (GUI available)."
 
 # ------------------------------------------------------------------
-# 3. Radeon GPU Detective – clean build directory first
+# 3. Radeon GPU Detective – with submodules initialised
 # ------------------------------------------------------------------
-echo "[3] Installing Radeon GPU Detective..."
+echo "[3] Installing Radeon GPU Detective (with submodules)..."
 
 if [ -d /tmp/radeon_gpu_detective ]; then
     rm -rf /tmp/radeon_gpu_detective
 fi
+
+# Clone with --recursive to fetch submodules
 git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
 cd /tmp/radeon_gpu_detective || { echo "ERROR: Failed to enter RGD directory"; exit 1; }
 
-# Remove any existing build directory (just in case)
+# Ensure submodules are fully initialised (in case --recursive missed some)
+git submodule update --init --recursive
+
+# Remove any stale build directory
 if [ -d build ]; then
     rm -rf build
 fi
@@ -110,7 +115,7 @@ fi
 # ------------------------------------------------------------------
 echo "[5] Installing root-cause-checker..."
 
-# Find repo root
+# Find repo root – try OLDPWD, then git toplevel, then fallback
 REPO_ROOT="${OLDPWD:-$(git rev-parse --show-toplevel 2>/dev/null || echo ~/amdgpu-guardian-embedded-build/base)}"
 cd "$REPO_ROOT" || { echo "ERROR: Failed to return to repo root"; exit 1; }
 

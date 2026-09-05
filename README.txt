@@ -10,13 +10,21 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
   THE JOURNEY (How We Got Here)
 ───────────────────────────────────────────────────────────────
 
-1. SYMPTOM DISCOVERY: CPU spike on Firefox due to PSR race.
-2. WORKAROUND: amdgpu.dcdebugmask=0x10.
-3. ARCHITECTURAL FIX: Upstream kernel 7.1.8.
-4. FORENSIC TOOLING: Built amdgpu-guardian.
-5. AUDIT & POLISHING: 10 defects fixed.
-6. STANDARDS COMPLIANCE: XDG Base Directory.
-7. INSTALLER CORRECTIONS: All deps installed, build directories cleaned, GUI works.
+1. SYMPTOM DISCOVERY: CPU spike on Firefox due to PSR race (flip_done timeouts).
+2. WORKAROUND: amdgpu.dcdebugmask=0x10 (disabled PSR).
+3. ARCHITECTURAL FIX: Upstream kernel 7.1.8 with Leo Li's patch set – PSR fixed.
+4. FORENSIC TOOLING: Built amdgpu-guardian with psr.py, telemetry, SQLite.
+5. AUDIT & POLISHING: 10 defects fixed (README, .gitignore, shebang, tool names, etc.).
+6. STANDARDS COMPLIANCE: Migrated database to XDG Base Directory (user‑owned, consistent).
+7. INSTALLER CORRECTIONS: After exhaustive verification, all package names corrected:
+   - gcc-c++ (not g++), sqlite (not sqlite3)
+   - zlib-ng-compat-devel (not zlib-devel)
+   - mesa-libgbm-devel (not gbm-devel)
+   - pkgconf-pkg-config (not pkgconfig)
+   - Added rocblas-devel for RVS
+   - Added SDL2-devel for UMR GUI
+   - Ensured RGD submodules are fully initialised.
+8. FINAL STATUS: All tools built and verified.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -64,14 +72,15 @@ If the installer fails, you can build each tool manually:
    cd /tmp/umr && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
-3. RGD:
+3. RGD (with submodules):
    git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd
-   cd /tmp/rgd && rm -rf build && mkdir build && cd build
+   cd /tmp/rgd && git submodule update --init --recursive
+   mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
 4. RVS (requires rocblas-devel):
    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/rvs
-   cd /tmp/rvs && rm -rf build && mkdir build && cd build
+   cd /tmp/rvs && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
 ───────────────────────────────────────────────────────────────
