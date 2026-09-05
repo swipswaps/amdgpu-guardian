@@ -27,10 +27,15 @@ Installation
    git clone https://github.com/swipswaps/amdgpu-guardian
    cd amdgpu-guardian
 
-2. (Optional) Install all dependencies and the wizard system‑wide:
+2. (Optional) Install the health‑check wizard system‑wide:
    sudo ./install.sh
 
    This copies guardian-wizard.sh to /usr/local/bin/amdgpu-guardian.
+
+3. (Optional) Install the full root‑cause forensic toolkit:
+   ./install-root-cause-tools.sh
+
+   This script installs all advanced tools (UMR, RGD, RVS, rocprofiler, etc.) and places them in /usr/local/bin. It is idempotent – safe to rerun.
 
 Usage
 -----
