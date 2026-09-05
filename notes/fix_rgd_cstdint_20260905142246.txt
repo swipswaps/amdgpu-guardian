@@ -1,0 +1,858 @@
+=== fix_rgd_cstdint.sh — 20260905142246 UTC ===
+gcc: 15.3.1
+
+=== 1. CLONE + FETCH DEPENDENCIES (build/ preserved) ===
+Cloning into '/tmp/rgd_fix_20260905142246'...
+Traceback (most recent call last):
+  File "/tmp/rgd_fix_20260905142246/build/fetch_dependencies.py", line 175, in <module>
+    do_fetch_dependencies(True, args.internal)
+                                ^^^^^^^^^^^^^
+AttributeError: 'Namespace' object has no attribute 'internal'
+fetch_dependencies exit: 1
+--- external/ after fetch ---
+amd_gpu_dis
+dev_driver
+  MISSING : rdf  <-- running pre_build.py as fallback
+  MISSING : system_info_utils  <-- running pre_build.py as fallback
+  MISSING : rmv  <-- running pre_build.py as fallback
+  MISSING : isa_spec_manager  <-- running pre_build.py as fallback
+
+pre_build.py: Creating Directory: /tmp/rgd_fix_20260905142246/build/linux
+
+pre_build.py: Fetching project dependencies ...
+
+
+fetch_dependencies.py: b'git version 2.55.0\n'
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/third_party/json does not exist, using 'git clone' to get latest from https://github.com/nlohmann/json
+Cloning into '/tmp/rgd_fix_20260905142246/external/third_party/json'...
+
+fetch_dependencies.py: Checking out required commit: v3.9.1
+Note: switching to 'v3.9.1'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at db78ac1d7 Merge branch 'release/3.9.1' into develop
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin v3.9.1
+From https://github.com/nlohmann/json
+ * tag                   v3.9.1     -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/third_party/cxxopts does not exist, using 'git clone' to get latest from https://github.com/jarro2783/cxxopts
+Cloning into '/tmp/rgd_fix_20260905142246/external/third_party/cxxopts'...
+
+fetch_dependencies.py: Checking out required commit: v3.0.0
+Note: switching to 'v3.0.0'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at c74846a Fix short options adding into unmatched
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin v3.0.0
+From https://github.com/jarro2783/cxxopts
+ * tag               v3.0.0     -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/rdf does not exist, using 'git clone' to get latest from https://github.com/GPUOpen-Drivers/libamdrdf
+Cloning into '/tmp/rgd_fix_20260905142246/external/rdf'...
+
+fetch_dependencies.py: Checking out required commit: v1.4.2
+Note: switching to 'v1.4.2'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 1f13ba8 RDF 1.4.2
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin v1.4.2
+From https://github.com/GPUOpen-Drivers/libamdrdf
+ * tag               v1.4.2     -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/rmv does not exist, using 'git clone' to get latest from https://github.com/GPUOpen-Tools/radeon_memory_visualizer
+Cloning into '/tmp/rgd_fix_20260905142246/external/rmv'...
+
+fetch_dependencies.py: Checking out required commit: 7b3e1fba5825260a5088d10a8cb1a853b8183ae5
+Note: switching to '7b3e1fba5825260a5088d10a8cb1a853b8183ae5'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 7b3e1fb Merge pull request #23 from onlynovice/rmv_tweaks
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin 7b3e1fba5825260a5088d10a8cb1a853b8183ae5
+From https://github.com/GPUOpen-Tools/radeon_memory_visualizer
+ * branch            7b3e1fba5825260a5088d10a8cb1a853b8183ae5 -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/system_info_utils does not exist, using 'git clone' to get latest from https://github.com/GPUOpen-Tools/system_info_utils
+Cloning into '/tmp/rgd_fix_20260905142246/external/system_info_utils'...
+
+fetch_dependencies.py: Checking out required commit: 928d2a2ff77fef14c155a2730bf796ab3ca85cfe
+Note: switching to '928d2a2ff77fef14c155a2730bf796ab3ca85cfe'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 928d2a2 Update system info reader and support files for v2.1
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin 928d2a2ff77fef14c155a2730bf796ab3ca85cfe
+From https://github.com/GPUOpen-Tools/system_info_utils
+ * branch            928d2a2ff77fef14c155a2730bf796ab3ca85cfe -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/isa_spec_manager does not exist, using 'git clone' to get latest from https://github.com/GPUOpen-Tools/isa_spec_manager
+Cloning into '/tmp/rgd_fix_20260905142246/external/isa_spec_manager'...
+
+fetch_dependencies.py: Checking out required commit: v1.2.0
+Note: switching to 'v1.2.0'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 507111d Updates for v1.2 release.
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin v1.2.0
+From https://github.com/GPUOpen-Tools/isa_spec_manager
+ * tag               v1.2.0     -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/comgr_utils does not exist, using 'git clone' to get latest from https://github.com/GPUOpen-Tools/comgr_utils
+Cloning into '/tmp/rgd_fix_20260905142246/external/comgr_utils'...
+
+fetch_dependencies.py: Checking out required commit: c99b131128d50bca3d76f0a4cde7993cfc947741
+Note: switching to 'c99b131128d50bca3d76f0a4cde7993cfc947741'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at c99b131 Update comgr_utils for June 2026 RDTS release.
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin c99b131128d50bca3d76f0a4cde7993cfc947741
+From https://github.com/GPUOpen-Tools/comgr_utils
+ * branch            c99b131128d50bca3d76f0a4cde7993cfc947741 -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/third_party/catch2 does not exist, using 'git clone' to get latest from https://github.com/catchorg/Catch2
+Cloning into '/tmp/rgd_fix_20260905142246/external/third_party/catch2'...
+
+fetch_dependencies.py: Checking out required commit: v2.13.6
+Note: switching to 'v2.13.6'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 5c88067b v2.13.6
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin v2.13.6
+From https://github.com/catchorg/Catch2
+ * tag                 v2.13.6    -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/third_party/subprocess does not exist, using 'git clone' to get latest from https://github.com/sheredom/subprocess.h
+Cloning into '/tmp/rgd_fix_20260905142246/external/third_party/subprocess'...
+
+fetch_dependencies.py: Checking out required commit: b49c56e9fe214488493021017bf3954b91c7c1f5
+Note: switching to 'b49c56e9fe214488493021017bf3954b91c7c1f5'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at b49c56e Update the workflow with the new min macOS image. (#89)
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin b49c56e9fe214488493021017bf3954b91c7c1f5
+From https://github.com/sheredom/subprocess.h
+ * branch            b49c56e9fe214488493021017bf3954b91c7c1f5 -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Directory /tmp/rgd_fix_20260905142246/external/third_party/pix_events does not exist, using 'git clone' to get latest from https://github.com/microsoft/PixEvents
+Cloning into '/tmp/rgd_fix_20260905142246/external/third_party/pix_events'...
+
+fetch_dependencies.py: Checking out required commit: 3a7e70dde7bf54f02f9d2e9dd6d3350c6cfb962f
+Note: switching to '3a7e70dde7bf54f02f9d2e9dd6d3350c6cfb962f'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 3a7e70d Update issue templates
+
+fetch_dependencies.py: Ensuring any branch is on the head using git pull --ff-only origin 3a7e70dde7bf54f02f9d2e9dd6d3350c6cfb962f
+From https://github.com/microsoft/PixEvents
+ * branch            3a7e70dde7bf54f02f9d2e9dd6d3350c6cfb962f -> FETCH_HEAD
+Already up to date.
+
+fetch_dependencies.py: Downloading https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.8.2502/linux_dxc_2025_02_20.x86_64.tar.gz into /tmp/rgd_fix_20260905142246/external/third_party/DXC/linux_dxc_2025_02_20.x86_64.tar.gz
+
+fetch_dependencies.py: Extracting in /tmp/rgd_fix_20260905142246/external/third_party/DXC
+
+fetch_dependencies.py: Downloading https://github.com/richgel999/miniz/releases/download/3.0.2/miniz-3.0.2.zip into /tmp/rgd_fix_20260905142246/external/third_party/miniz/miniz-3.0.2.zip
+
+fetch_dependencies.py: Extracting in /tmp/rgd_fix_20260905142246/external/third_party/miniz
+-- The C compiler identification is GNU 15.3.1
+-- The CXX compiler identification is GNU 15.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Excluding CLI, examples and tests.
+CMake Warning (dev) at /usr/share/cmake/Modules/FetchContent.cmake:1373 (message):
+  The DOWNLOAD_EXTRACT_TIMESTAMP option was not given and policy CMP0135 is
+  not set.  The policy's OLD behavior will be used.  When using a URL
+  download, the timestamps of extracted files should preferably be that of
+  the time of extraction, otherwise code that depends on the extracted
+  contents might not be rebuilt if the URL changes.  The OLD behavior
+  preserves the timestamps from the archive instead, but this is usually not
+  what you want.  Update your project to the NEW behavior or specify the
+  DOWNLOAD_EXTRACT_TIMESTAMP option with a value of true to avoid this
+  robustness issue.
+Call Stack (most recent call first):
+  external/comgr_utils/cmake/comgr_utils_external.cmake:44 (FetchContent_Declare)
+  external/comgr_utils/CMakeLists.txt:18 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Downloading https://gpuopen.com/download/AMD_GPU_MR_ISA_XML_2026_03_05.zip into /tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/../../external/isa_spec_xml
+-- ISA decoder XML directory created successfully at /tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/../../external/isa_spec_xml
+-- ISA spec XML schema version: 1.1.1, API major version: 1
+AMDGPU_Dis found  at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Lib/Linux/x64/libamdgpu_dis.so
+AMDGPU_Dis shared at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Lib/Linux/x64/libamdgpu_dis.so
+AMDGPU_Dis include at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Include/
+CMake Warning (dev) at CMakeLists.txt:119 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:124 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:127 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:130 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:133 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:136 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:152 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:155 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:158 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:164 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:171 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:176 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:181 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:185 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:189 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:193 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:211 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (7.8s)
+-- Generating done (0.0s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE
+    CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE
+    HEADLESS
+
+
+-- Build files have been written to: /tmp/rgd_fix_20260905142246/build/linux/make/debug
+
+pre_build.py: Creating Directory: /tmp/rgd_fix_20260905142246/build/linux/make
+
+pre_build.py: Generating build files ...
+
+pre_build.py: Creating Directory: /tmp/rgd_fix_20260905142246/build/linux/make/debug
+-- The C compiler identification is GNU 15.3.1
+-- The CXX compiler identification is GNU 15.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Excluding CLI, examples and tests.
+CMake Warning (dev) at /usr/share/cmake/Modules/FetchContent.cmake:1373 (message):
+  The DOWNLOAD_EXTRACT_TIMESTAMP option was not given and policy CMP0135 is
+  not set.  The policy's OLD behavior will be used.  When using a URL
+  download, the timestamps of extracted files should preferably be that of
+  the time of extraction, otherwise code that depends on the extracted
+  contents might not be rebuilt if the URL changes.  The OLD behavior
+  preserves the timestamps from the archive instead, but this is usually not
+  what you want.  Update your project to the NEW behavior or specify the
+  DOWNLOAD_EXTRACT_TIMESTAMP option with a value of true to avoid this
+  robustness issue.
+Call Stack (most recent call first):
+  external/comgr_utils/cmake/comgr_utils_external.cmake:44 (FetchContent_Declare)
+  external/comgr_utils/CMakeLists.txt:18 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Downloading https://gpuopen.com/download/AMD_GPU_MR_ISA_XML_2026_03_05.zip into /tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/../../external/isa_spec_xml
+-- ISA decoder XML directory created successfully at /tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/../../external/isa_spec_xml
+-- ISA spec XML schema version: 1.1.1, API major version: 1
+AMDGPU_Dis found  at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Lib/Linux/x64/libamdgpu_dis.so
+AMDGPU_Dis shared at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Lib/Linux/x64/libamdgpu_dis.so
+AMDGPU_Dis include at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Include/
+CMake Warning (dev) at CMakeLists.txt:119 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:124 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:127 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:130 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:133 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:136 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:152 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:155 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:158 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:164 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:171 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:176 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:181 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:185 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:189 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:193 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:211 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (7.7s)
+-- Generating done (0.0s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG
+    CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG
+    HEADLESS
+
+
+-- Build files have been written to: /tmp/rgd_fix_20260905142246/build/linux/make/release
+
+pre_build.py: Creating Directory: /tmp/rgd_fix_20260905142246/build/linux/make/release
+
+pre_build.py: Successfully completed in 1 minutes, 2.7 seconds
+pre_build exit: 0
+
+=== 2. PINNED isa_spec_manager COMMIT (for an upstream-fix check) ===
+507111dea876c3d4d268c1c86344835446791e41 2026-04-09 10:39:50 -0400 Updates for v1.2 release.
+27:    github_root + "GPUOpen-Tools/isa_spec_manager"         : ["../external/isa_spec_manager",      "v1.2.0"],
+
+=== 3. GUARDED PATCH: add #include <cstdint> where missing ===
+patched 15 file(s):
+  + external/isa_spec_manager/test/source/test_decode_inst.cpp
+  + external/isa_spec_manager/source/isa_spec_cli/cli_processor/cli_command_decode_shader_file.cpp
+  + external/isa_spec_manager/source/isa_spec_cli/cli_processor/cli_command_decode_machine_code.cpp
+  + external/isa_spec_manager/source/isa_explorer/isa_explorer.cpp
+  + external/isa_spec_manager/source/isa_decoder/isa_decoder.cpp
+  + external/isa_spec_manager/source/isa_decoder/encoding_condition_handler.hpp
+  + external/isa_spec_manager/source/examples/multi_arch_decoder.cpp
+  + external/isa_spec_manager/source/examples/basic_decoder.cpp
+  + external/isa_spec_manager/source/common/isa_xml_reader.cpp
+  + external/isa_spec_manager/source/common/amdisa_structures.h
+  + external/isa_spec_manager/source/common/logger.h
+  + external/isa_spec_manager/source/common/logger.cpp
+  + external/isa_spec_manager/source/common/amdisa_utility.cpp
+  + external/isa_spec_manager/include/amdisa/isa_decoder.h
+  + external/isa_spec_manager/include/amdisa/isa_explorer.h
+skipped 1:
+  - external/isa_spec_manager/source/common/amdisa_utility.h | already includes cstdint
+patch stage exit: 0
+--- confirm the two files named in the error dump ---
+/*
+ * Copyright (c) 2024 Advanced Micro Devices, Inc. All rights reserved.
+ */
+#ifndef AMDISA_STRUCTURES_H_
+#define AMDISA_STRUCTURES_H_
+
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+#include <iostream>
+/*
+ * Copyright (c) 2024 Advanced Micro Devices, Inc. All rights reserved.
+ */
+#ifndef ISA_DECODER_H_
+#define ISA_DECODER_H_
+
+// C++ libraries.
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
+
+
+=== 4. CONFIGURE (out-of-tree, build/ scripts preserved) ===
+-- The C compiler identification is GNU 15.3.1
+-- The CXX compiler identification is GNU 15.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Excluding CLI, examples and tests.
+CMake Warning (dev) at /usr/share/cmake/Modules/FetchContent.cmake:1373 (message):
+  The DOWNLOAD_EXTRACT_TIMESTAMP option was not given and policy CMP0135 is
+  not set.  The policy's OLD behavior will be used.  When using a URL
+  download, the timestamps of extracted files should preferably be that of
+  the time of extraction, otherwise code that depends on the extracted
+  contents might not be rebuilt if the URL changes.  The OLD behavior
+  preserves the timestamps from the archive instead, but this is usually not
+  what you want.  Update your project to the NEW behavior or specify the
+  DOWNLOAD_EXTRACT_TIMESTAMP option with a value of true to avoid this
+  robustness issue.
+Call Stack (most recent call first):
+  external/comgr_utils/cmake/comgr_utils_external.cmake:44 (FetchContent_Declare)
+  external/comgr_utils/CMakeLists.txt:18 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Downloading https://gpuopen.com/download/AMD_GPU_MR_ISA_XML_2026_03_05.zip into /tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/../../external/isa_spec_xml
+-- ISA decoder XML directory created successfully at /tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/../../external/isa_spec_xml
+-- ISA spec XML schema version: 1.1.1, API major version: 1
+AMDGPU_Dis found  at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Lib/Linux/x64/libamdgpu_dis.so
+AMDGPU_Dis shared at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Lib/Linux/x64/libamdgpu_dis.so
+AMDGPU_Dis include at /tmp/rgd_fix_20260905142246/external/amd_gpu_dis/Include/
+CMake Warning (dev) at CMakeLists.txt:119 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:124 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:127 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:130 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:133 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:136 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:152 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:155 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:158 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:164 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:171 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:176 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:181 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:185 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:189 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:193 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:211 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (7.8s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/rgd_fix_20260905142246/cmake_build
+cmake exit: 0
+
+=== 5. BUILD (full log in the companion .log file) ===
+make exit: 2
+--- Rule #29: is the ORIGINAL error text gone? ---
+original "does not name a type" error is ABSENT from the build log
+--- any remaining errors (first 40) ---
+85:/tmp/rgd_fix_20260905142246/external/rmv/source/backend/rmt_mutex.cpp:49:64: error: no matching function for call to ‘operator new(sizetype, std::mutex*)’
+--- last 20 lines of make ---
+   25 | #define RGD_COPYRIGHT_STRING "Copyright (C) "RGD_BUILD_YEAR" Advanced Micro Devices, Inc. All rights reserved."
+      |                              ^
+[ 73%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_serializer_json.cpp.o
+[ 74%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler.cpp.o
+In file included from /tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/rgd_serializer_json.cpp:12:
+/tmp/rgd_fix_20260905142246/source/radeon_gpu_detective_backend/rgd_version_info.h:25:30: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   25 | #define RGD_COPYRIGHT_STRING "Copyright (C) "RGD_BUILD_YEAR" Advanced Micro Devices, Inc. All rights reserved."
+      |                              ^
+[ 75%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler_factory.cpp.o
+[ 76%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler_rdna3.cpp.o
+[ 77%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler_rdna4.cpp.o
+[ 77%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_instruction_analyzer.cpp.o
+[ 78%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_utils.cpp.o
+[ 79%] Building C object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/__/__/external/third_party/miniz/miniz.c.o
+/tmp/rgd_fix_20260905142246/external/third_party/miniz/miniz.c:3185:9: note: ‘#pragma message: Using fopen, ftello, fseeko, stat() etc. path for file I/O - this path may not support large files.’
+ 3185 | #pragma message("Using fopen, ftello, fseeko, stat() etc. path for file I/O - this path may not support large files.")
+      |         ^~~~~~~
+[ 80%] Linking CXX static library librgd_backend.a
+[ 80%] Built target rgd_backend
+make: *** [Makefile:156: all] Error 2
+
+=== 6. INSTALL ONLY IF THE BUILD ACTUALLY SUCCEEDED ===
+BUILD FAILED (exit 2) — NOT installing, NOT claiming success.
+
+=== 7. STATE OF THE OTHER TOOLS (unverified by any installer run) ===
+umr: /usr/local/bin/umr
+rvs: 
+root-cause-checker: /usr/local/bin/root-cause-checker
+root-cause-checker in guardian repo root? YES
+
+=== END DIAGNOSTIC ===
