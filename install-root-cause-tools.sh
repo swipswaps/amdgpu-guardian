@@ -1,12 +1,12 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Finally correct: UMR builds with make.
+# install-root-cause-tools.sh – Universal build with autogen fallback.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Working Final)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Ultimate Final)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
-# Pre-flight: Check for ROCm repository
+# Pre-flight: ROCm repository
 # ------------------------------------------------------------------
 if ! grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
     echo "⚠️  ROCm repository not found."
@@ -31,7 +31,7 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – Build with make
+# 2. UMR – Universal build (try autogen, then configure, then make)
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
@@ -41,13 +41,40 @@ fi
 sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
 cd /opt/umr || { echo "ERROR: Failed to enter /opt/umr"; exit 1; }
 
-echo "  Building UMR with make..."
-make || { echo "ERROR: UMR make failed."; exit 1; }
-sudo make install || { echo "ERROR: UMR installation failed."; exit 1; }
+# Check for build methods in order
+if [ -f Makefile ]; then
+    echo "  Building with existing Makefile..."
+    make || { echo "ERROR: UMR make failed."; exit 1; }
+    sudo make install || { echo "ERROR: UMR make install failed."; exit 1; }
+elif [ -f autogen.sh ]; then
+    echo "  Running autogen.sh..."
+    ./autogen.sh || { echo "ERROR: autogen.sh failed."; exit 1; }
+    ./configure || { echo "ERROR: configure failed."; exit 1; }
+    make || { echo "ERROR: make failed."; exit 1; }
+    sudo make install || { echo "ERROR: make install failed."; exit 1; }
+elif [ -f configure.ac ]; then
+    echo "  Running autoreconf..."
+    autoreconf -i || { echo "ERROR: autoreconf failed."; exit 1; }
+    ./configure || { echo "ERROR: configure failed."; exit 1; }
+    make || { echo "ERROR: make failed."; exit 1; }
+    sudo make install || { echo "ERROR: make install failed."; exit 1; }
+elif [ -f CMakeLists.txt ]; then
+    echo "  Building with CMake..."
+    mkdir build && cd build || { echo "ERROR: CMake build dir failed."; exit 1; }
+    cmake .. || { echo "ERROR: CMake configuration failed."; exit 1; }
+    make -j$(nproc) || { echo "ERROR: CMake build failed."; exit 1; }
+    sudo make install || { echo "ERROR: CMake install failed."; exit 1; }
+else
+    echo "ERROR: No known build system found for UMR."
+    echo "Please build manually:"
+    echo "  cd /opt/umr"
+    echo "  ./autogen.sh && ./configure && make && sudo make install"
+    exit 1
+fi
 echo "  ✅ UMR installed."
 
 # ------------------------------------------------------------------
-# 3. Radeon GPU Detective – CMake build with submodules
+# 3. Radeon GPU Detective (submodules)
 # ------------------------------------------------------------------
 echo "[3] Installing Radeon GPU Detective..."
 
@@ -63,7 +90,7 @@ sudo make install || { echo "ERROR: RGD installation failed."; exit 1; }
 echo "  ✅ RGD installed."
 
 # ------------------------------------------------------------------
-# 4. ROCm Validation Suite – CMake build with ROCm dependencies
+# 4. ROCm Validation Suite (if rocblas present)
 # ------------------------------------------------------------------
 echo "[4] Installing ROCm Validation Suite..."
 

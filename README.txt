@@ -1,6 +1,6 @@
 ═══════════════════════════════════════════════════════════
   AMDGPU Guardian – Complete Diagnostic Framework
-  DEFINITIVE STATE – All Tools Successfully Installed
+  FINAL STATE – All Tools Successfully Installed
 ═══════════════════════════════════════════════════════════
 
 This project provides a self‑contained health check, forensic toolkit,
@@ -16,7 +16,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 4. FORENSIC TOOLING: Built amdgpu-guardian.
 5. AUDIT & POLISHING: 10 defects fixed.
 6. STANDARDS COMPLIANCE: XDG Base Directory.
-7. INSTALLER CORRECTIONS: UMR build with make, RGD with submodules, RVS with rocblas check.
+7. INSTALLER CORRECTIONS: Universal build for UMR (autogen/autoreconf/make/CMake fallback).
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -49,17 +49,25 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 └──────────┴────────────────────────────────────┴─────────────────────────────┘
 
 ───────────────────────────────────────────────────────────────
-  YOUR NEXT STEPS (Completed)
+  MANUAL FALLBACK (if the installer ever fails)
 ───────────────────────────────────────────────────────────────
 
-✅ All tools are installed and verified.
-✅ The health check runs without errors.
-✅ The database is correctly set up.
+If the installer fails, you can build each tool manually:
 
-If you encounter a future GPU issue, use the wizard first:
-  sudo ./guardian-wizard.sh
+1. UMR:
+   cd /opt/umr
+   ./autogen.sh && ./configure && make && sudo make install
 
-Then, if deep analysis is needed, use the specific forensic commands.
+2. RGD:
+   git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd
+   cd /tmp/rgd && mkdir build && cd build
+   cmake .. && make -j$(nproc) && sudo make install
+
+3. RVS:
+   (Requires rocblas; install with: sudo dnf install rocblas)
+   git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/rvs
+   cd /tmp/rvs && mkdir build && cd build
+   cmake .. && make -j$(nproc) && sudo make install
 
 ───────────────────────────────────────────────────────────────
   REFERENCES
