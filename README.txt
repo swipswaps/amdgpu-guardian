@@ -16,7 +16,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 4. FORENSIC TOOLING: Built amdgpu-guardian.
 5. AUDIT & POLISHING: 10 defects fixed.
 6. STANDARDS COMPLIANCE: XDG Base Directory.
-7. INSTALLER CORRECTIONS: Universal build for UMR (autogen/autoreconf/make/CMake fallback).
+7. INSTALLER CORRECTIONS: Build in /tmp, install with sudo; universal build detection.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -55,7 +55,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 If the installer fails, you can build each tool manually:
 
 1. UMR:
-   cd /opt/umr
+   cd /tmp/umr
    ./autogen.sh && ./configure && make && sudo make install
 
 2. RGD:

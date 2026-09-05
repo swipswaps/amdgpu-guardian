@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Universal build with autogen fallback.
+# install-root-cause-tools.sh – Builds in /tmp, installs with sudo.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Ultimate Final)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Working)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -31,50 +31,51 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – Universal build (try autogen, then configure, then make)
+# 2. UMR – build in /tmp
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
-if [ -d /opt/umr ]; then
-    sudo rm -rf /opt/umr
+# Remove old build if present
+if [ -d /tmp/umr ]; then
+    rm -rf /tmp/umr
 fi
-sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
-cd /opt/umr || { echo "ERROR: Failed to enter /opt/umr"; exit 1; }
 
-# Check for build methods in order
-if [ -f Makefile ]; then
-    echo "  Building with existing Makefile..."
-    make || { echo "ERROR: UMR make failed."; exit 1; }
-    sudo make install || { echo "ERROR: UMR make install failed."; exit 1; }
-elif [ -f autogen.sh ]; then
-    echo "  Running autogen.sh..."
+git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
+cd /tmp/umr || { echo "ERROR: Failed to enter /tmp/umr"; exit 1; }
+
+# Detect and use the correct build method
+if [ -f autogen.sh ]; then
+    echo "  Using autogen.sh..."
     ./autogen.sh || { echo "ERROR: autogen.sh failed."; exit 1; }
     ./configure || { echo "ERROR: configure failed."; exit 1; }
     make || { echo "ERROR: make failed."; exit 1; }
-    sudo make install || { echo "ERROR: make install failed."; exit 1; }
+    sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
 elif [ -f configure.ac ]; then
-    echo "  Running autoreconf..."
+    echo "  Using autoreconf..."
     autoreconf -i || { echo "ERROR: autoreconf failed."; exit 1; }
     ./configure || { echo "ERROR: configure failed."; exit 1; }
     make || { echo "ERROR: make failed."; exit 1; }
-    sudo make install || { echo "ERROR: make install failed."; exit 1; }
-elif [ -f CMakeLists.txt ]; then
-    echo "  Building with CMake..."
-    mkdir build && cd build || { echo "ERROR: CMake build dir failed."; exit 1; }
-    cmake .. || { echo "ERROR: CMake configuration failed."; exit 1; }
-    make -j$(nproc) || { echo "ERROR: CMake build failed."; exit 1; }
-    sudo make install || { echo "ERROR: CMake install failed."; exit 1; }
+    sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
+elif [ -f Makefile ]; then
+    echo "  Using existing Makefile..."
+    make || { echo "ERROR: make failed."; exit 1; }
+    sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
+elif [ -f meson.build ]; then
+    echo "  Using meson..."
+    meson setup build || { echo "ERROR: meson setup failed."; exit 1; }
+    ninja -C build || { echo "ERROR: ninja build failed."; exit 1; }
+    sudo ninja -C build install || { echo "ERROR: ninja install failed."; exit 1; }
 else
     echo "ERROR: No known build system found for UMR."
     echo "Please build manually:"
-    echo "  cd /opt/umr"
+    echo "  cd /tmp/umr"
     echo "  ./autogen.sh && ./configure && make && sudo make install"
     exit 1
 fi
 echo "  ✅ UMR installed."
 
 # ------------------------------------------------------------------
-# 3. Radeon GPU Detective (submodules)
+# 3. Radeon GPU Detective – build in /tmp
 # ------------------------------------------------------------------
 echo "[3] Installing Radeon GPU Detective..."
 
@@ -90,7 +91,7 @@ sudo make install || { echo "ERROR: RGD installation failed."; exit 1; }
 echo "  ✅ RGD installed."
 
 # ------------------------------------------------------------------
-# 4. ROCm Validation Suite (if rocblas present)
+# 4. ROCm Validation Suite – build in /tmp (if rocblas present)
 # ------------------------------------------------------------------
 echo "[4] Installing ROCm Validation Suite..."
 
