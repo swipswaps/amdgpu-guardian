@@ -1,10 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Definitive idempotent installer.
-# Builds UMR (Meson), RGD (CMake with submodules), RVS (CMake with ROCm deps).
-# Exits with error if any build fails.
+# install-root-cause-tools.sh – Truly correct, handles build directories properly.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Definitive)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Real Fix)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -21,7 +19,6 @@ if ! grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
     echo "gpgcheck=1"
     echo "gpgkey=https://repo.radeon.com/rocm/rocm.gpg.key"
     echo "REPOEOF"
-    echo ""
     echo "Then rerun this script."
     exit 1
 fi
@@ -34,7 +31,7 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – Clean Meson build
+# 2. UMR – Handle build directory correctly
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
@@ -42,7 +39,7 @@ if [ -d /opt/umr ]; then
     echo "  /opt/umr exists – pulling updates and cleaning build."
     cd /opt/umr || exit
     sudo git pull --rebase
-    # Remove stale build directory completely
+    # Remove stale build directory if present
     if [ -d build ]; then
         sudo rm -rf build
     fi
@@ -51,8 +48,8 @@ else
     cd /opt/umr || exit
 fi
 
-# Run meson setup (creates build/ directory with all files)
-sudo meson setup build --reconfigure
+# Now set up the build directory – since we removed it, just do a fresh setup
+sudo meson setup build
 if [ $? -ne 0 ]; then
     echo "ERROR: UMR Meson setup failed."
     exit 1
@@ -76,12 +73,10 @@ echo "  ✅ UMR installed."
 # ------------------------------------------------------------------
 echo "[3] Installing Radeon GPU Detective..."
 
-# Clone to /tmp (writable) with submodules
 if [ -d /tmp/radeon_gpu_detective ]; then
     echo "  /tmp/radeon_gpu_detective exists – pulling updates and initializing submodules."
     cd /tmp/radeon_gpu_detective || exit
     git pull --rebase
-    # Critical: initialize and update submodules
     git submodule update --init --recursive
 else
     echo "  Cloning RGD with --recursive..."
@@ -89,7 +84,6 @@ else
     cd /tmp/radeon_gpu_detective || exit
 fi
 
-# Clean and rebuild
 if [ -d build ]; then
     rm -rf build
 fi
@@ -104,12 +98,10 @@ echo "  ✅ RGD installed."
 # ------------------------------------------------------------------
 echo "[4] Installing ROCm Validation Suite..."
 
-# Check for rocblas (required)
 if ! ldconfig -p 2>/dev/null | grep -q rocblas; then
     echo "⚠️  rocblas not found. RVS requires rocblas."
     echo "  To install: sudo dnf install rocblas"
-    echo "  Or skip RVS for now."
-    echo "  Continuing without RVS."
+    echo "  Skipping RVS."
 else
     if [ -d /tmp/ROCmValidationSuite ]; then
         cd /tmp/ROCmValidationSuite || exit

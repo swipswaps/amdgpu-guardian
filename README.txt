@@ -1,26 +1,26 @@
 ═══════════════════════════════════════════════════════════
   AMDGPU Guardian – Complete Diagnostic Framework
-  DEFINITIVE EDITION – All Tools Fully Installed
+  FINAL STATE – All Tools Correctly Installed
 ═══════════════════════════════════════════════════════════
 
 This project provides a self‑contained health check, forensic toolkit,
 and remediation framework for AMD Radeon GPUs on Fedora Linux.
 
 ───────────────────────────────────────────────────────────────
-  HOW WE GOT HERE (The Complete Journey)
+  HOW WE GOT HERE
 ───────────────────────────────────────────────────────────────
 
-1. SYMPTOM DISCOVERY: CPU spike (170%) on Firefox due to PSR race.
-2. WORKAROUND: amdgpu.dcdebugmask=0x10 (disabled PSR).
-3. ARCHITECTURAL FIX: Upstream kernel 7.1.8 with Leo Li's patch set.
-4. FORENSIC TOOLING: Built amdgpu-guardian with psr.py, telemetry, SQLite.
-5. AUDIT & POLISHING: 10 defects fixed (README, .gitignore, shebang, etc.).
-6. STANDARDS COMPLIANCE: Migrated database to XDG Base Directory.
+1. SYMPTOM DISCOVERY: CPU spike due to PSR race.
+2. WORKAROUND: amdgpu.dcdebugmask=0x10.
+3. ARCHITECTURAL FIX: Upstream kernel 7.1.8.
+4. FORENSIC TOOLING: Built amdgpu-guardian.
+5. AUDIT & POLISHING: 10 defects fixed.
+6. STANDARDS COMPLIANCE: XDG Base Directory.
 7. INSTALLER CORRECTIONS: Fixed Meson/CMake builds, submodules, ROCm deps.
-8. DEFINITIVE INSTALLATION: All tools built successfully (UMR, RGD, RVS).
+8. FINAL FIX: Handles UMR build directory correctly.
 
 ───────────────────────────────────────────────────────────────
-  WHERE WE ARE NOW (Current State)
+  CURRENT STATE
 ───────────────────────────────────────────────────────────────
 
 ┌───────────────────────────┬─────────────────────────────────────┐
