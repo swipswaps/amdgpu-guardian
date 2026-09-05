@@ -1,0 +1,460 @@
+=== diagnose_rgd_and_deps.sh — 20260905140447 UTC ===
+repo: swipswaps/amdgpu-guardian   branch: master
+
+=== A. WHY DID RGD FAIL — stderr NOT discarded ===
+--- clone --depth 1 --recursive (installer Strategy A, uncensored) ---
+Cloning into '/tmp/rgd_diag_20260905140447'...
+clone exit code: 0
+--- what actually landed on disk ---
+total 56
+drwxr-xr-x. 10 owner owner  400 Sep  5 10:04 .
+drwxrwxrwt. 21 root  root   580 Sep  5 10:04 ..
+drwxr-xr-x.  3 owner owner  120 Sep  5 10:04 build
+-rw-r--r--.  1 owner owner   86 Sep  5 10:04 Buildinfo.properties.in
+-rw-r--r--.  1 owner owner 1203 Sep  5 10:04 _clang-format
+-rw-r--r--.  1 owner owner 9457 Sep  5 10:04 CMakeLists.txt
+drwxr-xr-x.  3 owner owner  120 Sep  5 10:04 documentation
+drwxr-xr-x.  4 owner owner  100 Sep  5 10:04 external
+drwxr-xr-x.  7 owner owner  260 Sep  5 10:04 .git
+-rw-r--r--.  1 owner owner   42 Sep  5 10:04 .gitattributes
+drwxr-xr-x.  3 owner owner   60 Sep  5 10:04 .github
+-rw-r--r--.  1 owner owner  341 Sep  5 10:04 .gitignore
+-rw-r--r--.  1 owner owner 1094 Sep  5 10:04 License.txt
+-rw-r--r--.  1 owner owner 7691 Sep  5 10:04 README.md
+-rw-r--r--.  1 owner owner  601 Sep  5 10:04 .readthedocs.yaml
+-rw-r--r--.  1 owner owner 1346 Sep  5 10:04 RGD_NOTICES.txt
+-rw-r--r--.  1 owner owner 5094 Sep  5 10:04 RGD_RELEASE_NOTES.txt
+drwxr-xr-x.  2 owner owner   60 Sep  5 10:04 samples
+drwxr-xr-x.  4 owner owner   80 Sep  5 10:04 source
+drwxr-xr-x.  4 owner owner  120 Sep  5 10:04 test
+--- submodule status (empty SHA prefix "-" = never fetched) ---
+--- .gitmodules (relative urls break installer Strategy C) ---
+cat: /tmp/rgd_diag_20260905140447/.gitmodules: No such file or directory
+
+=== B. RGD INSTALL TARGET (installer assumes it exists) ===
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:119:install(TARGETS radeon_gpu_detective_cli
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:124:install(FILES RGD_NOTICES.txt
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:127:install(FILES README.md
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:130:install(FILES RGD_RELEASE_NOTES.txt
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:133:install(DIRECTORY documentation/build/rgd
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:136:install(DIRECTORY samples
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:142:    install(FILES external/amd_gpu_dis/Lib/VS2022/x64/amdgpu_dis.dll
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:145:    install(FILES $<TARGET_FILE:comgr_plugin>
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:148:    install(FILES external/third_party/DXC/bin/x64/dxc.exe
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:152:    install(FILES ${AMDGPU_DIS_SHAREDLIB}
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:155:    install(FILES $<TARGET_FILE:comgr_plugin>
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:158:    install(FILES external/third_party/DXC/bin/dxc
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:164:install(FILES external/isa_spec_xml/amdgpu_isa_rdna3.xml
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:171:install(TARGETS rgd_test
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:176:install(TARGETS radeon_gpu_detective_cli
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:181:install(FILES test/README.md
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:185:install(DIRECTORY test/scripts/input_description_files
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:189:install(FILES test/scripts/TestRunner.py
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:193:install(FILES test/scripts/JsonTests.py
+/tmp/rgd_diag_20260905140447/CMakeLists.txt:199:    install(FILES external/amd_gpu_dis/Lib/VS2022/x64/amdgpu_dis.dll
+(no output above means "sudo make install" has nothing to do)
+
+=== C. RGD CONFIGURE — real cmake errors ===
+-- The C compiler identification is GNU 15.3.1
+-- The CXX compiler identification is GNU 15.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMake Error at CMakeLists.txt:31 (include):
+  include could not find requested file:
+
+    dev_tools
+
+
+CMake Error at CMakeLists.txt:42 (add_subdirectory):
+  add_subdirectory given source "external/rdf" which is not an existing
+  directory.
+
+
+CMake Error at CMakeLists.txt:46 (add_subdirectory):
+  add_subdirectory given source "external/system_info_utils" which is not an
+  existing directory.
+
+
+CMake Error at CMakeLists.txt:49 (add_subdirectory):
+  add_subdirectory given source "external/rmv/source/parser" which is not an
+  existing directory.
+
+
+CMake Error at CMakeLists.txt:50 (add_subdirectory):
+  add_subdirectory given source "external/rmv/source/backend" which is not an
+  existing directory.
+
+
+CMake Error at CMakeLists.txt:56 (target_link_libraries):
+  Cannot specify link libraries for target "RmvParser" which is not built by
+  this project.
+
+
+-- Configuring incomplete, errors occurred!
+cmake exit code: 1
+
+=== D. PACKAGE NAMES STILL UNVERIFIED IN v2 ===
+  AVAILABLE : rocm-smi                 -> rocm-smi.x86_64
+  AVAILABLE : zlib-ng-compat-devel     -> zlib-ng-compat-devel.i686zlib-ng-compat-devel.x86_64
+  NO MATCH  : zlib-devel                <-- aborts the whole dnf transaction
+  AVAILABLE : pkgconf-pkg-config       -> pkgconf-pkg-config.i686pkgconf-pkg-config.x86_64
+  AVAILABLE : mesa-libgbm-devel        -> mesa-libgbm-devel.i686mesa-libgbm-devel.x86_64
+  AVAILABLE : libglvnd-egl             -> libglvnd-egl.i686libglvnd-egl.x86_64
+  AVAILABLE : nvtop                    -> nvtop.x86_64
+  AVAILABLE : radeontop                -> radeontop.x86_64
+  AVAILABLE : perf                     -> perf.x86_64
+  AVAILABLE : trace-cmd                -> trace-cmd.x86_64
+  AVAILABLE : rocblas-devel            -> rocblas-devel.x86_64
+  NO MATCH  : SDL2-devel                <-- aborts the whole dnf transaction
+  AVAILABLE : json-c-devel             -> json-c-devel.i686json-c-devel.x86_64
+  AVAILABLE : libpciaccess-devel       -> libpciaccess-devel.i686libpciaccess-devel.x86_64
+
+=== E. UMR GUI — is it actually built? ===
+Cloning into '/tmp/umr_diag_20260905140447'...
+--- option() declarations ---
+61:option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+62:option(UMR_NO_DRM "Disable libdrm functions to read memory stats (disables server and GUI)" OFF)
+63:option(UMR_NO_LLVM "Disable LLVM shader disasm functions, suggested for LLVM < 7" OFF)
+64:option(UMR_STATIC_EXECUTABLE "Build a static executable" OFF)
+65:option(UMR_STATIC_LLVM "Force using static LLVM libraries instead of preferring dynamic" OFF)
+66:option(UMR_NO_GUI "Disable umr --gui option" OFF)
+67:option(UMR_NO_SERVER "Disable umr --server option" ${UMR_NO_GUI})
+68:option(UMR_INSTALL_DEV "Install the development headers and static library" OFF)
+69:option(UMR_INSTALL_TEST "Install the umr test application" OFF)
+75:cmake_dependent_option(UMR_GUI "Enable umr --gui option" ON "NOT UMR_NO_GUI" OFF)
+76:cmake_dependent_option(UMR_SERVER "Enable umr --server option" ON "NOT UMR_NO_SERVER" OFF)
+--- GUI/SDL references ---
+34:set(CPACK_DEBIAN_PACKAGE_DEPENDS "libncurses6, libpciaccess-dev, libllvm21, zlib1g-dev, libsdl2-dev, libgbm-dev, libglx-dev, libglew-dev")
+38:set(CPACK_RPM_PACKAGE_REQUIRES "ncurses-libs, libpciaccess, llvm-libs, zlib, SDL2-devel, libgbm-devel")
+62:option(UMR_NO_DRM "Disable libdrm functions to read memory stats (disables server and GUI)" OFF)
+66:option(UMR_NO_GUI "Disable umr --gui option" OFF)
+67:option(UMR_NO_SERVER "Disable umr --server option" ${UMR_NO_GUI})
+70:# TODO: can server exist without GUI? assume not
+72:# NOT UMR_NO_GUI is confusing. create a hidden option instead. ON by default
+75:cmake_dependent_option(UMR_GUI "Enable umr --gui option" ON "NOT UMR_NO_GUI" OFF)
+83:  if(UMR_GUI)
+84:    message(WARNING "Static executable build disables GUI")
+85:    set(UMR_GUI OFF)
+94:  set(UMR_GUI OFF)
+126:if(UMR_GUI AND NOT UMR_SERVER)
+127:  message(WARNING "You shouldn't build UMR_GUI without UMR_SERVER!")
+130:if(UMR_GUI OR UMR_SERVER)
+143:      # if(UMR_GUI) OpenGL isn't needed for server-only builds
+150:      set(REQUIRED_EXTERNAL_LIBS_GUI ${REQUIRED_EXTERNAL_LIBS_GUI} OpenGL::GL ${BO_IMPORT_LIBS})
+152:      message(WARNING "Required library (drm: ${DRM_FOUND}, gbm: ${GBM_FOUND}, OpenGL: ${OpenGL_OpenGL_FOUND}, EGL: ${OpenGL_EGL_FOUND}) not found. Disabling --gui")
+153:      set (UMR_GUI OFF)
+157:  set(REQUIRED_EXTERNAL_LIBS_GUI ${REQUIRED_EXTERNAL_LIBS_GUI} parson)
+--- installed umr, if any ---
+/usr/local/bin/umr
+User Mode Register debugger v1.0.11 for AMDGPU devices (build: 1.0.11-312-gd1e34ce [main], date: Sep  5 2026), Copyright (c) 2025, AMD Inc.
+
+*** Device Selection ***
+
+	--database-path, -dbp <path>
+		Specify a database path for register, ip, and asic model data.
+
+	--option -O <string>[,<string>,...]
+		Enable various flags:
+			bits, bitsfull, empty_log, follow, no_follow_ib, no_follow_chained_ib, 
+			use_pci, use_colour, read_smc, quiet, no_kernel, verbose, halt_waves,
+			disasm_early_term, no_disasm, disasm_anyways, wave64, filter_shader_registers,
+			full_shader, skip_gprs, no_fold_vm_decode, force_asic_file, use_full_user_queue, aql_heuristic, no_backtrace
+
+	--gpu, -g <asicname>(@<instance> | =<pcidevice>)
+		Select a gpu by ASIC name and either the instance number or the PCI bus identifier.
+
+	--instance, -i <number>
+		Select a device instance to investigate. (default: 0)
+		The instance is the directory name under /sys/kernel/debug/dri/
+		of the card you want to work with.
+
+	--force, -f <number>
+		Force a PCIE DID number in hex or asic name.  Useful if amdgpu is
+		not loaded or a display is not attached.
+
+	--pci <device>
+		Force a specific PCI device using the domain:bus:slot.function format in hex.
+		This is useful when more than one GPU is available. If the amdgpu driver is
+		loaded the corresponding instance will be automatically detected.
+
+	--by-pci <device>
+		Like --pci but still uses the traditional debugfs path to interface with
+		the hardware.  This is useful for interacting with APIs that identify hardware
+		by the PCI bus address.
+
+	--user-queue, -uq [<clienttype>,]<client>,<queue>
+		Attach to a user queue specified by a given client and queue.  Where the optional clienttype is 'kgd' or 'kfd',
+		client is one of 'client=number', 'pid=number', or 'comm=string' to select a client by it's
+		client number, process PID, or command name, and 'queue' is one of 'queue=number' or 'type=string'.
+		For 'type' the string must be one of 'gfx', 'compute', or 'sdma'.
+
+		For example: 'kfd,comm=ollama,queue=2' specifies a KFD client attached to the first instance of ollama and queue #2.
+
+	--gfxoff, -go <0 | 1>
+		Enable GFXOFF with a non-zero value or disable with a 0.  Used to control the GFXOFF feature on
+		select hardware. Command without parameter will check GFXOFF status.
+
+	--vm-partition, -vmp <-1, 0...n>
+		Select a VM partition for all GPUVM accesses.  Default is -1 which
+		refers to the 0'th instance of the VM hub which is not the same as
+		specifying '0'.  Values above -1 are for ASICs with multiple IP instances.
+
+	--vgpr-granularity, -vgpr <-1, 0...n>
+		Specify the VGPR size granularity as a power of 2, e.g., '2' means 4 DWORDs per increment.
+
+	--devcoredump <file>, -dcd <file>
+		Initialize a device based on a devcoredump generated by the kernel.
+
+*** Bank Selection ***
+
+	--bank, -b <se> <sh> <instance>
+		Select a GRBM se/sh/instance bank in decimal. Can use 'x' to denote broadcast.
+
+	--sbank, -sb <me> <pipe> <queue> [vmid]
+		Select a SRBM me/pipe/queue bank in decimal.  VMID is optional (default: 0). 
+
+	--cbank, -cb <context_reg_bank>
+		Select a context register bank (value is multiplied by 0x1000). 
+
+*** Device Information ***
+
+	--config, -c
+		Print out configuation data read from kernel driver.
+
+	--enumerate, -e
+		Enumerate all AMDGPU devices detected.
+
+	--list-blocks, -lb
+		List the IP blocks discovered for this device.
+
+	--list-regs, -lr <string>
+		List the registers for a given IP block (can use '-O bits' to list bitfields).
+
+	--dump-discovery-table, -ddt 
+		Dump device discovery table information.
+
+*** Register Access ***
+
+	--lookup, -lu <address_or_regname> <value>
+		Look up bit decoding of an MMIO register by address (with 0x prefix) or by register name.
+		The register name string must include the ipname, e.g., uvd6.mmUVD_CONTEXT_ID.
+
+	--write, -w <address_or_regname> <number>
+		Write a value in hex to a register specified as a register path in the
+		form <asicname.ipname.regname>.  For instance "tonga.uvd5.mmUVD_SOFT_RESET".
+		Can be used multiple times to set multiple registers.  You can
+		specify * for asicname and/or ipname to simplify scripts.
+		When using an address directly use the BYTE address of the register.
+		Ex (write via regspec name): umr -w *.*.mmUVD_SOFT_RESET 0x11223344
+		Ex (write via byte address): umr -w 0x1014 0x55667788
+
+	--writebit, -wb <string> <number>
+		Write a value in hex to a register bitfield specified as in --write but
+		the addition of the bitfield name.  For instance: "*.gfx80.mmRLC_PG_CNTL.PG_OVERRIDE"
+
+	--read, -r <address_or_regname> <number>
+		Read a value from a register and print it to stdout.  This command
+		uses the same path notation as --write.  It also accepts * for regname.
+		A trailing * on a regname will read any register that has a name that contains the
+		remainder of the name specified.
+		When using an address directly use the BYTE address of the register.
+		Ex (read via regspec name): umr -r *.*.mmUVD_SOFT_RESET
+		Ex (read via byte address): umr -r 0x1014
+
+	--logscan, -ls
+		Read and display contents of the MMIO register log (usually specified with
+		'-O bits,empty_log' to continually dump bitfields and empty the trace after.)
+
+*** Device Utilization ***
+
+	--top, -t
+		Summarize GPU utilization.  Can select a SE block with --bank.  Can use
+		options 'use_colour' to colourize output and 'use_pci' to improve efficiency.
+
+	--waves, -wa [all=][<none> | <uq> | <ring_name> | <vmid>@<addr>.<size>]
+		Print out information about any active CU waves.  Can use '-O bits'
+		to see decoding of various wave fields.  Can use the '-O halt_waves' option
+		to halt the SQ while reading registers.  An optional ring name can be specified
+		which will then search a given ring for pointers to active shaders.  It will
+		default to the 'gfx' ring if nothing is specified.  An IB can be specified
+		by a vmid, address, and size (in hex bytes) triplet.  Using user queues can
+		be specified by passing 'uq'.  Specifying 'all=' will scan all of the GFX (XCD) blocks in the ASIC.
+
+	--singlestep, -ss <se>,<sh>,<wgp>,<simd>,<wave>
+		Single-step one wave.
+		Tries advancing execution on the specified wave by one instruction.
+	--profiler, -prof [pixel= | vertex= | compute=]<nsamples> [ring]
+		Capture 'nsamples' samples of wave data. Optionally specify a ring to search
+		for IBs that point to shaders.  Defaults to 'gfx'.  Additionally, the type
+		of shader can be selected for as well to only profile a given type.
+
+*** Virtual Memory Access ***
+
+	VMIDs are specified in umr as 16 bit numbers where the lower 8 bits
+	indicate the hardware VMID and the upper 8 bits indicate the which VM space to use.
+
+		0 - GFX hub
+		1 - MM hub
+		2 - VC0 hub
+		3 - VC1 hub
+
+	For instance, 0x107 would specify the 7'th VMID on the MM hub.
+
+	--vm-decode, -vm vmid@<address>
+		Decode a page mapping at a specified address (in hex) from the VMID specified.
+		The VMID can be specified in hexadecimal (with leading '0x') or in decimal.
+		Implies '-O verbose' for the duration of the command so does not require it
+		to be manually specified.
+
+	--vm-read, -vr [<vmid>@]<address> <size>
+		Read 'size' bytes (in hex) from a given address (in hex) to stdout. Optionally
+		specify the VMID (in decimal or in hex with a '0x' prefix) treating the address
+		as a virtual address instead.  Can use 'verbose' option to print out PDE/PTE
+		decodings.
+
+	--vm-write, -vw [<vmid>@]<address> <size>
+		Write 'size' bytes (in hex) to a given address (in hex) from stdin.
+
+	--vm-write-word, -vww [<vmid>@]<address> <word>
+		Write a 32-bit word 'data' (in hex) to a given address (in hex) in host machine order.
+
+	--vm-disasm, -vdis [<vmid>@]<address> <size>
+		Disassemble 'size' bytes (in hex) from a given address (in hex).  The size can
+		be specified as zero to have umr try and compute the shader size.
+
+*** Packet Decoding and User Queue Commands ***
+
+	--list-uq
+		List out brief information about all of the KFD and KGD clients and their queues.
+
+	--print-uq
+		Print out all of the user queue information decoded for a specified --user-queue.
+
+	--dump-uq, -du
+		Dump the command submission attached to a given user queue selected with --user-queue.
+
+	--ring-stream, -RS <string>([from:to])
+		Read the contents of a ring named by the string without the amdgpu_ring_ prefix. 
+		By default it will read and display the entire ring.  A starting and ending 
+		address can be specified in decimal or a '.' can be used to indicate relative 
+		to the current wptr pointer.  For example, "-RS gfx" would read the entire gfx 
+		ring, "-RS gfx[0:16]" would display the contents from address 0 to 16 inclusively, and 
+		"-RS gfx[.]" or "-RS gfx[.:.]" would display contents from the ring READ pointer to 
+		the ring WRITE pointer.  Specifying 'uq' as the ringname will make it read from any
+		attached user queue client space instead of a kernel ring.
+
+	--dump-ib, -di [vmid@]address length [pm]
+		Dump an IB packet at an address with an optional VMID.  The length is specified
+		in bytes.  The type of decoder <pm> is optional and defaults to PM4 packets.
+		Can specify '3' for SDMA packets, '2' for MES packets, '1' for VPE packets, '5' for UMSCH packets,
+		'6' for HSA packets, '7' for VCN decode, and '8' for VCN encode.
+
+	--dump-ib-file, -df filename [pm]
+		Dump an IB stored in a file as a series of hexadecimal DWORDS one per line.  If the filename
+		ends in .bin the file is treated as binary, if the filename ends in .ring it treats it as a
+		ring copy and skips the first 12 bytes.  Can optionally specify '3' for SDMA packets, '2' for
+		MES packets, '1' for VPE packets, '5' for UMSCH packets, '6' for HSA packets, '7' for VCN decode, and '8' for
+		VCN encode.  The default is PM4.
+
+	--header-dump, -hd [HEADER_DUMP_reg]
+		Dump the contents of the HEADER_DUMP buffer and decode the opcode into a
+		human readable string.
+
+	--tool [cpc, cpg, sdma]
+		Invoke diagnostic tool(s) (space delimited) such as printing CPC or SDMA state.
+
+*** Power and clock ***
+
+	--power, -p 
+		Read the content of clocks, temperature, gpu loading at runtime
+		options 'use_colour' to colourize output.
+
+	--clock-scan, -cs [clock]
+		Scan the current hierarchy value of each clock.
+		Default will list all the hierarchy value of clocks. otherwise will list the corresponding clock, eg. sclk.
+
+	--clock-manual, -cm [clock] [value]
+		Set the value of the corresponding clock.
+		Use -cs command to check hierarchy values of clock and then use -cm value to set the clock.
+
+	--clock-high, -ch
+		Set power_dpm_force_performance_level to high.
+
+	--clock-low, -cl
+		Set power_dpm_force_performance_level to low.
+
+	--clock-auto, -ca
+		Set power_dpm_force_performance_level to auto.
+
+	--ppt-read, -pptr [ppt_field_name]
+		Read powerplay table value and print it to stdout.
+		This command will print all the powerplay table information or the corresponding string in powerplay table.
+
+	--gpu-metrics, -gm [delay]
+		Print the GPU metrics table for the device, optionally continuously read every 'delay' milliseconds.
+
+	--power, -p 
+		Read the conetent of clocks, temperature, gpu loading at runtime
+		options 'use_colour' to colourize output 
+
+*** Video BIOS Information ***
+
+	--vbios-info, -vi 
+		Print Video BIOS information
+
+*** Test Vector Generation ***
+
+	--test-log, -tl <filename>
+		Log all MMIO/memory reads to a file
+
+	--test-harness, -th <filename>
+		Use a test harness file instead of reading from hardware
+
+*** RUMR Commands ***
+
+	--rumr-client <server>
+		Run as a RUMR client connecting to 'server', e.g. tcp://127.0.0.1:9000
+
+	--rumr-server <server>
+		Run as a RUMR server binding to 'server', e.g. tcp://127.0.0.1:9000
+
+*** KFD Support ***
+
+	--runlist, -rls <node>
+		Dump any runlists for a given KFD node specified
+
+	--dump-mqd vmid@virtualaddr engsel
+		Dump an MQD from a given VMID and virtual address for a given engine and asic family.
+
+	--dump-mqd-file filename engsel
+		Dump an MQD from a binary file.
+
+		MQD Engines are one of engsel == 0=compute, 2=sdma0, 3=sdma1, 4=gfx, 5=mes.
+
+*** Scriptware Support ***
+
+	--script [commands]
+		Run a script helper command.  Run without parameters to see list of commands.
+
+*** GUI server ***
+
+	--server [url] 
+		url can be tcp://127.0.0.1:1234 or tcp://*:8090. Default value is 'tcp://*:1234' see Nanomsg protocol doc for more example
+
+	--gui [url] 
+		Run umr in GUI mode. An optional url can be supplied to connect to a remote instance (see --server)
+
+=== F. OLDPWD CLAIM IN STEP 5 ===
+repo root per git: /tmp/rgd_diag_20260905140447
+note: in the installer, OLDPWD at step 5 is a /tmp build dir,
+so the git rev-parse fallback never executes.
+
+=== END DIAGNOSTIC ===
