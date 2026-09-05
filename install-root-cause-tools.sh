@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Diagnostic + manual fallback.
+# install-root-cause-tools.sh – Correctly builds UMR with CMake.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Definitive Final)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final CMake)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -31,7 +31,7 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – diagnostic build
+# 2. UMR – build with CMake (since CMakeLists.txt is present)
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
@@ -45,15 +45,22 @@ cd /tmp/umr || { echo "ERROR: Failed to enter /tmp/umr"; exit 1; }
 echo "  Contents of /tmp/umr:"
 ls -la
 
-echo "  Attempting autogen.sh build..."
-if [ -f autogen.sh ]; then
+# Check for CMakeLists.txt (which we now know exists)
+if [ -f CMakeLists.txt ]; then
+    echo "  Building UMR with CMake..."
+    mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
+    cmake .. || { echo "ERROR: CMake configuration failed."; exit 1; }
+    make -j$(nproc) || { echo "ERROR: make failed."; exit 1; }
+    sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
+elif [ -f autogen.sh ]; then
+    echo "  Using autogen.sh..."
     chmod +x autogen.sh
     ./autogen.sh || { echo "ERROR: autogen.sh failed."; exit 1; }
     ./configure || { echo "ERROR: configure failed."; exit 1; }
     make || { echo "ERROR: make failed."; exit 1; }
     sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
 elif [ -f configure.ac ]; then
-    echo "  autogen.sh missing, using autoreconf..."
+    echo "  Using autoreconf..."
     autoreconf -i || { echo "ERROR: autoreconf failed."; exit 1; }
     ./configure || { echo "ERROR: configure failed."; exit 1; }
     make || { echo "ERROR: make failed."; exit 1; }
@@ -71,8 +78,8 @@ else
     echo "ERROR: No known build system found."
     echo "Manual fallback steps:"
     echo "  cd /tmp/umr"
-    echo "  ./autogen.sh && ./configure && make && sudo make install"
-    echo "  (If autogen.sh is missing, run: autoreconf -i)"
+    echo "  mkdir build && cd build"
+    echo "  cmake .. && make -j$(nproc) && sudo make install"
     exit 1
 fi
 echo "  ✅ UMR installed."
