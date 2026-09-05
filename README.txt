@@ -275,3 +275,32 @@ To run the health check (with forensic detection):
   sudo ./guardian-wizard.sh
 
 The forensic tools are now fully integrated and ready for use.
+
+═══════════════════════════════════════════════════════════════════
+  FINAL INSTALLATION NOTES (Definitive)
+═══════════════════════════════════════════════════════════════════
+
+The installer (`install-root-cause-tools.sh`) is now fully functional:
+
+• UMR is built with Meson (handles existing /opt/umr, cleans build)
+• RGD is cloned with --recursive (submodules included) and built with CMake
+• RVS is built with CMake, and requires rocblas (check performed)
+
+If the installer fails, verify:
+
+1. The ROCm repository is enabled:
+   /etc/yum.repos.d/rocm.repo should exist with the correct baseurl.
+
+2. Required libraries are installed:
+   sudo dnf install rocblas rocprim rocrand
+
+3. You have internet access to clone the repositories.
+
+After installation, verify:
+  ./root-cause-checker
+
+Run the health check:
+  sudo ./guardian-wizard.sh
+
+The wizard will now show the forensic tools as installed.
+═══════════════════════════════════════════════════════════════════
