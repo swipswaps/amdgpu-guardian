@@ -1,0 +1,147 @@
+[  1%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder.dir/isa_decoder.cpp.o
+[  1%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder_dynamic.dir/isa_decoder.cpp.o
+[  2%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder.dir/__/common/amdisa_utility.cpp.o
+[  2%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer.dir/isa_explorer.cpp.o
+[  3%] Building C object external/rdf/imported/zstd/CMakeFiles/zstd.dir/src/zstd.c.o
+[  4%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer.dir/__/common/amdisa_utility.cpp.o
+[  5%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer_dynamic.dir/isa_explorer.cpp.o
+[  5%] Building CXX object ComgrUtils/CMakeFiles/ComgrUtils.dir/source/comgr_utils.cpp.o
+[  6%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer.dir/__/common/amdisa_structures.cpp.o
+[  7%] Linking CXX static library libComgrUtils.a
+[  8%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer.dir/__/common/isa_xml_reader.cpp.o
+[  8%] Built target ComgrUtils
+[  9%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder_dynamic.dir/__/common/amdisa_utility.cpp.o
+[ 10%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer_dynamic.dir/__/common/amdisa_utility.cpp.o
+[ 11%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder.dir/__/common/amdisa_structures.cpp.o
+[ 12%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder_dynamic.dir/__/common/amdisa_structures.cpp.o
+[ 13%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer.dir/__/third_party/tinyxml2/tinyxml2.cpp.o
+[ 14%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer_dynamic.dir/__/common/amdisa_structures.cpp.o
+[ 15%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder.dir/__/common/isa_xml_reader.cpp.o
+[ 16%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder_dynamic.dir/__/common/isa_xml_reader.cpp.o
+[ 17%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder_dynamic.dir/__/third_party/tinyxml2/tinyxml2.cpp.o
+[ 18%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer_dynamic.dir/__/common/isa_xml_reader.cpp.o
+[ 19%] Building CXX object external/isa_spec_manager/source/isa_decoder/CMakeFiles/isa_decoder.dir/__/third_party/tinyxml2/tinyxml2.cpp.o
+[ 20%] Linking CXX static library ../../../../output/libisa_explorer.a
+[ 20%] Built target isa_explorer
+[ 21%] Building CXX object external/isa_spec_manager/source/isa_explorer/CMakeFiles/isa_explorer_dynamic.dir/__/third_party/tinyxml2/tinyxml2.cpp.o
+[ 22%] Linking CXX shared library ../../../../output/libisa_decoder_dynamic.so
+[ 23%] Linking CXX static library ../../../../output/libisa_decoder.a
+[ 23%] Built target isa_decoder_dynamic
+[ 23%] Built target isa_decoder
+[ 24%] Linking CXX shared library ../../../../output/libisa_explorer_dynamic.so
+[ 24%] Built target isa_explorer_dynamic
+[ 25%] Linking C static library libzstd.a
+[ 25%] Built target zstd
+[ 26%] Building CXX object external/rdf/rdf/CMakeFiles/amdrdf.dir/src/amdrdf.cpp.o
+[ 27%] Linking CXX static library libamdrdf.a
+[ 27%] Built target amdrdf
+[ 30%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_parser.cpp.o
+[ 32%] Building CXX object external/system_info_utils/source/CMakeFiles/system_info.dir/system_info_reader.cpp.o
+[ 32%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_platform.cpp.o
+[ 30%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_address_helper.cpp.o
+[ 33%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_print.cpp.o
+[ 34%] Building CXX object external/system_info_utils/source/CMakeFiles/system_info.dir/driver_overrides_reader.cpp.o
+[ 35%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_file_format.cpp.o
+[ 35%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_assert.cpp.o
+[ 35%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_rdf_data_stream.cpp.o
+[ 36%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_rdf_snapshot_index.cpp.o
+[ 38%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_rdf_dd_event_info.cpp.o
+[ 38%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_rdf_gpu_mem_segment_info.cpp.o
+[ 39%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_rdf_snapshot_info.cpp.o
+[ 40%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_string_memory_pool.cpp.o
+[ 41%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_token.cpp.o
+[ 42%] Building CXX object parser/CMakeFiles/RmvParser.dir/rmt_token_heap.cpp.o
+[ 43%] Building CXX object parser/CMakeFiles/RmvParser.dir/linux/safe_crt.cpp.o
+[ 44%] Linking CXX static library libRmvParser.a
+[ 44%] Built target RmvParser
+[ 45%] Linking CXX static library libsystem_info.a
+[ 45%] Built target system_info
+[ 48%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_atomic.cpp.o
+[ 48%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_adapter_info.cpp.o
+[ 48%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_amd_gpu_dis_loader.cpp.o
+[ 50%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_code_object_database.cpp.o
+[ 51%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_asic_info.cpp.o
+[ 52%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_crash_info_registers_parser_rdna2.cpp.o
+[ 52%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_crash_info_registers_parser_context.cpp.o
+[ 53%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_data_set.cpp.o
+[ 54%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_crash_info_registers_parser_rdna3.cpp.o
+[ 55%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_data_snapshot.cpp.o
+[ 56%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_data_timeline.cpp.o
+[ 57%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_job_system.cpp.o
+[ 58%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_crash_info_registers_parser_rdna4.cpp.o
+[ 59%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_crash_info_registers_parser_strix1.cpp.o
+[ 60%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_linear_buffer.cpp.o
+[ 61%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_dxbc_parser.cpp.o
+[ 62%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_legacy_snapshot_writer.cpp.o
+/tmp/rgd_build_20260905145719/source/radeon_gpu_detective_backend/rgd_code_object_database.cpp: In function ‘bool RgdCodeObjDbInitializeComgrHandles(RgdCodeObjectDatabase*)’:
+/tmp/rgd_build_20260905145719/source/radeon_gpu_detective_backend/rgd_code_object_database.cpp:45:24: warning: attribute ignored [-Wattributes]
+   45 |             const bool [[maybe_unused]] is_contains_pal_metadata =
+      |                        ^
+/tmp/rgd_build_20260905145719/source/radeon_gpu_detective_backend/rgd_code_object_database.cpp:45:24: note: an attribute that appertains to a type-specifier is ignored
+[ 63%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_enhanced_crash_info_serializer.cpp.o
+[ 64%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_memory_aliasing_timeline.cpp.o
+[ 65%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_memory_event_history.cpp.o
+[ 65%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_memory_event_history_impl.cpp.o
+[ 65%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_exec_marker_tree_serializer.cpp.o
+[ 66%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_marker_data_serializer.cpp.o
+[ 67%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_parsing_utils.cpp.o
+[ 68%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_mutex.cpp.o
+[ 69%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_process_utils.cpp.o
+[ 70%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_page_table.cpp.o
+[ 71%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_physical_allocation_list.cpp.o
+[ 72%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_pool.cpp.o
+[ 73%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_process_map.cpp.o
+[ 74%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_rdf_file_parser.cpp.o
+[ 75%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_rdf_snapshot_writer.cpp.o
+[ 76%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_register_parsing_utils.cpp.o
+[ 77%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_resource_history.cpp.o
+[ 78%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_resource_info_serializer.cpp.o
+[ 79%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_serializer.cpp.o
+[ 80%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_resource_list.cpp.o
+[ 81%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_resource_userdata.cpp.o
+In file included from /tmp/rgd_build_20260905145719/source/radeon_gpu_detective_backend/rgd_serializer.cpp:11:
+/tmp/rgd_build_20260905145719/source/radeon_gpu_detective_backend/rgd_version_info.h:25:30: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   25 | #define RGD_COPYRIGHT_STRING "Copyright (C) "RGD_BUILD_YEAR" Advanced Micro Devices, Inc. All rights reserved."
+      |                              ^
+[ 82%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_snapshot_writer.cpp.o
+[ 82%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_thread.cpp.o
+[ 83%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_serializer_json.cpp.o
+[ 84%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_thread_event.cpp.o
+[ 85%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_trace_loader.cpp.o
+[ 86%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_virtual_allocation_list.cpp.o
+In file included from /tmp/rgd_build_20260905145719/source/radeon_gpu_detective_backend/rgd_serializer_json.cpp:12:
+/tmp/rgd_build_20260905145719/source/radeon_gpu_detective_backend/rgd_version_info.h:25:30: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   25 | #define RGD_COPYRIGHT_STRING "Copyright (C) "RGD_BUILD_YEAR" Advanced Micro Devices, Inc. All rights reserved."
+      |                              ^
+[ 87%] Building CXX object backend/CMakeFiles/RmvBackend.dir/rmt_include_pevents.cpp.o
+[ 88%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler.cpp.o
+[ 89%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler_factory.cpp.o
+[ 90%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler_rdna3.cpp.o
+[ 91%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_disassembler_rdna4.cpp.o
+[ 92%] Linking CXX static library libRmvBackend.a
+[ 92%] Built target RmvBackend
+[ 92%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_srd_instruction_analyzer.cpp.o
+[ 93%] Building CXX object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/rgd_utils.cpp.o
+[ 94%] Building C object source/radeon_gpu_detective_backend/CMakeFiles/rgd_backend.dir/__/__/external/third_party/miniz/miniz.c.o
+/tmp/rgd_build_20260905145719/external/third_party/miniz/miniz.c:3185:9: note: ‘#pragma message: Using fopen, ftello, fseeko, stat() etc. path for file I/O - this path may not support large files.’
+ 3185 | #pragma message("Using fopen, ftello, fseeko, stat() etc. path for file I/O - this path may not support large files.")
+      |         ^~~~~~~
+[ 95%] Linking CXX static library librgd_backend.a
+[ 95%] Built target rgd_backend
+[ 97%] Building CXX object test/source/rgd_test/CMakeFiles/rgd_test.dir/test_srd_classification.cpp.o
+[ 97%] Building CXX object test/source/rgd_test/CMakeFiles/rgd_test.dir/main.cpp.o
+[ 98%] Building CXX object test/source/rgd_test/CMakeFiles/rgd_test.dir/test_rgd_file.cpp.o
+[ 98%] Building CXX object source/radeon_gpu_detective_cli/CMakeFiles/radeon_gpu_detective_cli.dir/main.cpp.o
+In file included from /tmp/rgd_build_20260905145719/source/radeon_gpu_detective_cli/main.cpp:28:
+/tmp/rgd_build_20260905145719/source/radeon_gpu_detective_cli/../radeon_gpu_detective_backend/rgd_version_info.h:25:30: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   25 | #define RGD_COPYRIGHT_STRING "Copyright (C) "RGD_BUILD_YEAR" Advanced Micro Devices, Inc. All rights reserved."
+      |                              ^
+[ 99%] Linking CXX executable rgd
+copying /tmp/rgd_build_20260905145719/external/comgr_utils/external/comgr/lib/x64/libamd_comgr.so.3.0.0 to /tmp/rgd_build_20260905145719/bld_a/source/radeon_gpu_detective_cli/lib/
+copying /tmp/rgd_build_20260905145719/source/radeon_gpu_detective_cli/../../external/third_party/DXC/bin/dxc to /tmp/rgd_build_20260905145719/bld_a/source/radeon_gpu_detective_cli/utils/dx12/dxc/
+copying /tmp/rgd_build_20260905145719/source/radeon_gpu_detective_cli/../../external/isa_spec_xml/amdgpu_isa_rdna3.xml to /tmp/rgd_build_20260905145719/bld_a/source/radeon_gpu_detective_cli/utils/isa_spec/
+copying /tmp/rgd_build_20260905145719/source/radeon_gpu_detective_cli/../../external/isa_spec_xml/amdgpu_isa_rdna3_5.xml to /tmp/rgd_build_20260905145719/bld_a/source/radeon_gpu_detective_cli/utils/isa_spec/
+copying /tmp/rgd_build_20260905145719/source/radeon_gpu_detective_cli/../../external/isa_spec_xml/amdgpu_isa_rdna4.xml to /tmp/rgd_build_20260905145719/bld_a/source/radeon_gpu_detective_cli/utils/isa_spec/
+[ 99%] Built target radeon_gpu_detective_cli
+[100%] Linking CXX executable rgd_test
+[100%] Built target rgd_test
