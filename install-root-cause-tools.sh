@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Final correct version with explicit exit codes.
+# install-root-cause-tools.sh – Finally correct with fallback build for UMR.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Correct)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Ultimate)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -31,39 +31,28 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – Fresh clone and clean build
+# 2. UMR – Build with autotools fallback
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
-# Completely remove old directory if present
 if [ -d /opt/umr ]; then
-    echo "  Removing old /opt/umr..."
     sudo rm -rf /opt/umr
 fi
-
-echo "  Cloning UMR..."
 sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
 cd /opt/umr || { echo "ERROR: Failed to enter /opt/umr"; exit 1; }
 
-echo "  Setting up meson build..."
-sudo meson setup build
-if [ $? -ne 0 ]; then
-    echo "ERROR: UMR Meson setup failed."
-    exit 1
-fi
-
-echo "  Building UMR..."
-sudo ninja -C build
-if [ $? -ne 0 ]; then
-    echo "ERROR: UMR build failed."
-    exit 1
-fi
-
-echo "  Installing UMR..."
-sudo ninja -C build install
-if [ $? -ne 0 ]; then
-    echo "ERROR: UMR installation failed."
-    exit 1
+# Check if meson.build exists
+if [ -f meson.build ]; then
+    echo "  Using Meson build..."
+    meson setup build || { echo "ERROR: UMR Meson setup failed."; exit 1; }
+    ninja -C build || { echo "ERROR: UMR Meson build failed."; exit 1; }
+    sudo ninja -C build install || { echo "ERROR: UMR installation failed."; exit 1; }
+else
+    echo "  meson.build not found, using autotools fallback..."
+    autoreconf -i || { echo "ERROR: autoreconf failed."; exit 1; }
+    ./configure || { echo "ERROR: configure failed."; exit 1; }
+    make || { echo "ERROR: make failed."; exit 1; }
+    sudo make install || { echo "ERROR: make install failed."; exit 1; }
 fi
 echo "  ✅ UMR installed."
 
@@ -73,14 +62,10 @@ echo "  ✅ UMR installed."
 echo "[3] Installing Radeon GPU Detective..."
 
 if [ -d /tmp/radeon_gpu_detective ]; then
-    echo "  /tmp/radeon_gpu_detective exists – removing for fresh clone."
     rm -rf /tmp/radeon_gpu_detective
 fi
-
-echo "  Cloning RGD with --recursive..."
 git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
 cd /tmp/radeon_gpu_detective || { echo "ERROR: Failed to enter RGD directory"; exit 1; }
-
 mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
 cmake .. || { echo "ERROR: RGD CMake configuration failed."; exit 1; }
 make -j$(nproc) || { echo "ERROR: RGD build failed."; exit 1; }
@@ -100,10 +85,8 @@ else
     if [ -d /tmp/ROCmValidationSuite ]; then
         rm -rf /tmp/ROCmValidationSuite
     fi
-
     git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/ROCmValidationSuite
     cd /tmp/ROCmValidationSuite || { echo "ERROR: Failed to enter RVS directory"; exit 1; }
-
     mkdir build && cd build || { echo "ERROR: Failed to create RVS build directory"; exit 1; }
     cmake .. || { echo "ERROR: RVS CMake configuration failed."; exit 1; }
     make -j$(nproc) || { echo "ERROR: RVS build failed."; exit 1; }
