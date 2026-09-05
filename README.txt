@@ -7,17 +7,17 @@ This project provides a self‑contained health check, forensic toolkit,
 and remediation framework for AMD Radeon GPUs on Fedora Linux.
 
 ───────────────────────────────────────────────────────────────
-  HOW WE GOT HERE
+  HOW WE GOT HERE (Complete Journey)
 ───────────────────────────────────────────────────────────────
 
-1. SYMPTOM DISCOVERY: CPU spike due to PSR race.
+1. SYMPTOM DISCOVERY: CPU spike (170%) on Firefox due to PSR race.
 2. WORKAROUND: amdgpu.dcdebugmask=0x10.
 3. ARCHITECTURAL FIX: Upstream kernel 7.1.8.
 4. FORENSIC TOOLING: Built amdgpu-guardian.
 5. AUDIT & POLISHING: 10 defects fixed.
 6. STANDARDS COMPLIANCE: XDG Base Directory.
 7. INSTALLER CORRECTIONS: Fixed Meson/CMake builds, submodules, ROCm deps.
-8. FINAL FIX: Handles UMR build directory correctly.
+8. FINAL CORRECTION: Handles UMR build directory correctly, proper exit codes.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE

@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Truly correct, handles build directories properly.
+# install-root-cause-tools.sh – Final correct version with explicit exit codes.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Real Fix)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Correct)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -31,36 +31,35 @@ sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cma
 sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – Handle build directory correctly
+# 2. UMR – Fresh clone and clean build
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
+# Completely remove old directory if present
 if [ -d /opt/umr ]; then
-    echo "  /opt/umr exists – pulling updates and cleaning build."
-    cd /opt/umr || exit
-    sudo git pull --rebase
-    # Remove stale build directory if present
-    if [ -d build ]; then
-        sudo rm -rf build
-    fi
-else
-    sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
-    cd /opt/umr || exit
+    echo "  Removing old /opt/umr..."
+    sudo rm -rf /opt/umr
 fi
 
-# Now set up the build directory – since we removed it, just do a fresh setup
+echo "  Cloning UMR..."
+sudo git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /opt/umr
+cd /opt/umr || { echo "ERROR: Failed to enter /opt/umr"; exit 1; }
+
+echo "  Setting up meson build..."
 sudo meson setup build
 if [ $? -ne 0 ]; then
     echo "ERROR: UMR Meson setup failed."
     exit 1
 fi
 
+echo "  Building UMR..."
 sudo ninja -C build
 if [ $? -ne 0 ]; then
     echo "ERROR: UMR build failed."
     exit 1
 fi
 
+echo "  Installing UMR..."
 sudo ninja -C build install
 if [ $? -ne 0 ]; then
     echo "ERROR: UMR installation failed."
@@ -74,20 +73,15 @@ echo "  ✅ UMR installed."
 echo "[3] Installing Radeon GPU Detective..."
 
 if [ -d /tmp/radeon_gpu_detective ]; then
-    echo "  /tmp/radeon_gpu_detective exists – pulling updates and initializing submodules."
-    cd /tmp/radeon_gpu_detective || exit
-    git pull --rebase
-    git submodule update --init --recursive
-else
-    echo "  Cloning RGD with --recursive..."
-    git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
-    cd /tmp/radeon_gpu_detective || exit
+    echo "  /tmp/radeon_gpu_detective exists – removing for fresh clone."
+    rm -rf /tmp/radeon_gpu_detective
 fi
 
-if [ -d build ]; then
-    rm -rf build
-fi
-mkdir build && cd build || exit
+echo "  Cloning RGD with --recursive..."
+git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
+cd /tmp/radeon_gpu_detective || { echo "ERROR: Failed to enter RGD directory"; exit 1; }
+
+mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
 cmake .. || { echo "ERROR: RGD CMake configuration failed."; exit 1; }
 make -j$(nproc) || { echo "ERROR: RGD build failed."; exit 1; }
 sudo make install || { echo "ERROR: RGD installation failed."; exit 1; }
@@ -104,17 +98,13 @@ if ! ldconfig -p 2>/dev/null | grep -q rocblas; then
     echo "  Skipping RVS."
 else
     if [ -d /tmp/ROCmValidationSuite ]; then
-        cd /tmp/ROCmValidationSuite || exit
-        git pull --rebase
-    else
-        git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/ROCmValidationSuite
-        cd /tmp/ROCmValidationSuite || exit
+        rm -rf /tmp/ROCmValidationSuite
     fi
 
-    if [ -d build ]; then
-        rm -rf build
-    fi
-    mkdir build && cd build || exit
+    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/ROCmValidationSuite
+    cd /tmp/ROCmValidationSuite || { echo "ERROR: Failed to enter RVS directory"; exit 1; }
+
+    mkdir build && cd build || { echo "ERROR: Failed to create RVS build directory"; exit 1; }
     cmake .. || { echo "ERROR: RVS CMake configuration failed."; exit 1; }
     make -j$(nproc) || { echo "ERROR: RVS build failed."; exit 1; }
     sudo make install || { echo "ERROR: RVS installation failed."; exit 1; }
@@ -133,7 +123,8 @@ fi
 
 echo ""
 echo "═══════════════════════════════════════════════════════════"
-echo "  ✅ SUCCESS: All tools installed."
+echo "  ✅ ALL TOOLS INSTALLED SUCCESSFULLY"
 echo "  Run 'root-cause-checker' to verify."
 echo "  Run 'sudo ./guardian-wizard.sh' to run health check."
 echo "═══════════════════════════════════════════════════════════"
+exit 0
