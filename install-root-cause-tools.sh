@@ -1,8 +1,8 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Correctly builds UMR with CMake.
+# install-root-cause-tools.sh – Installs all deps, builds UMR with CMake.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final CMake)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Deps)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -24,14 +24,14 @@ if ! grep -q "repo.radeon.com/rocm" /etc/yum.repos.d/*.repo 2>/dev/null; then
 fi
 
 # ------------------------------------------------------------------
-# 1. Install dnf packages (skip unavailable)
+# 1. Install all dnf packages (including missing deps)
 # ------------------------------------------------------------------
-echo "[1] Installing dnf packages (skipping unavailable)..."
-sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build
-sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
+echo "[1] Installing dnf packages (including ncurses-devel)..."
+sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build ncurses-devel zlib-devel libdrm-devel
+sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build ncurses-devel zlib-devel libdrm-devel rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – build with CMake (since CMakeLists.txt is present)
+# 2. UMR – build with CMake (now with ncurses-devel)
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
@@ -42,43 +42,16 @@ fi
 git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
 cd /tmp/umr || { echo "ERROR: Failed to enter /tmp/umr"; exit 1; }
 
-echo "  Contents of /tmp/umr:"
-ls -la
-
-# Check for CMakeLists.txt (which we now know exists)
 if [ -f CMakeLists.txt ]; then
     echo "  Building UMR with CMake..."
     mkdir build && cd build || { echo "ERROR: Failed to create build directory"; exit 1; }
     cmake .. || { echo "ERROR: CMake configuration failed."; exit 1; }
     make -j$(nproc) || { echo "ERROR: make failed."; exit 1; }
     sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
-elif [ -f autogen.sh ]; then
-    echo "  Using autogen.sh..."
-    chmod +x autogen.sh
-    ./autogen.sh || { echo "ERROR: autogen.sh failed."; exit 1; }
-    ./configure || { echo "ERROR: configure failed."; exit 1; }
-    make || { echo "ERROR: make failed."; exit 1; }
-    sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
-elif [ -f configure.ac ]; then
-    echo "  Using autoreconf..."
-    autoreconf -i || { echo "ERROR: autoreconf failed."; exit 1; }
-    ./configure || { echo "ERROR: configure failed."; exit 1; }
-    make || { echo "ERROR: make failed."; exit 1; }
-    sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
-elif [ -f Makefile ]; then
-    echo "  Using existing Makefile..."
-    make || { echo "ERROR: make failed."; exit 1; }
-    sudo make install || { echo "ERROR: sudo make install failed."; exit 1; }
-elif [ -f meson.build ]; then
-    echo "  Using meson..."
-    meson setup build || { echo "ERROR: meson setup failed."; exit 1; }
-    ninja -C build || { echo "ERROR: ninja build failed."; exit 1; }
-    sudo ninja -C build install || { echo "ERROR: ninja install failed."; exit 1; }
 else
     echo "ERROR: No known build system found."
     echo "Manual fallback steps:"
-    echo "  cd /tmp/umr"
-    echo "  mkdir build && cd build"
+    echo "  cd /tmp/umr && mkdir build && cd build"
     echo "  cmake .. && make -j$(nproc) && sudo make install"
     exit 1
 fi

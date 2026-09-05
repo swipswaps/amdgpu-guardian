@@ -16,7 +16,7 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 4. FORENSIC TOOLING: Built amdgpu-guardian.
 5. AUDIT & POLISHING: 10 defects fixed.
 6. STANDARDS COMPLIANCE: XDG Base Directory.
-7. INSTALLER CORRECTIONS: UMR builds with CMake; installer script stored in repository.
+7. INSTALLER CORRECTIONS: Added missing build dependencies (ncurses-devel, zlib-devel, libdrm-devel); UMR builds with CMake.
 
 ───────────────────────────────────────────────────────────────
   CURRENT STATE
@@ -54,17 +54,20 @@ and remediation framework for AMD Radeon GPUs on Fedora Linux.
 
 If the installer fails, you can build each tool manually:
 
-1. UMR (uses CMake):
-   cd /tmp/umr
-   mkdir build && cd build
+1. Install dependencies:
+   sudo dnf install ncurses-devel zlib-devel libdrm-devel cmake make gcc g++ git
+
+2. UMR (CMake):
+   git clone https://gitlab.freedesktop.org/tomstdenis/umr.git /tmp/umr
+   cd /tmp/umr && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
-2. RGD:
+3. RGD:
    git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/rgd
    cd /tmp/rgd && mkdir build && cd build
    cmake .. && make -j$(nproc) && sudo make install
 
-3. RVS:
+4. RVS:
    (Requires rocblas; install with: sudo dnf install rocblas)
    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/rvs
    cd /tmp/rvs && mkdir build && cd build
