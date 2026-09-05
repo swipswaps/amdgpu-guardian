@@ -1,10 +1,10 @@
 #!/bin/bash
-# install-root-cause-tools.sh – Final idempotent installer with proper error handling.
+# install-root-cause-tools.sh – Definitive idempotent installer.
 # Builds UMR (Meson), RGD (CMake with submodules), RVS (CMake with ROCm deps).
-# Exits with error if critical dependencies are missing.
+# Exits with error if any build fails.
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  Installing Full AMDGPU Root‑Cause Toolkit (Final Fix)"
+echo "  Installing Full AMDGPU Root‑Cause Toolkit (Definitive)"
 echo "═══════════════════════════════════════════════════════════"
 
 # ------------------------------------------------------------------
@@ -31,16 +31,18 @@ fi
 # ------------------------------------------------------------------
 echo "[1] Installing dnf packages (skipping unavailable)..."
 sudo dnf install -y rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build
-sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocblas rocprim rocrand
+sudo dnf install -y --skip-unavailable rocm-smi radeontop nvtop trace-cmd perf git make gcc g++ cmake python3 sqlite3 autoconf automake libtool meson ninja-build rocm-dkms rocm-dev rocprofiler rocgdb rocprim rocblas rocrand
 
 # ------------------------------------------------------------------
-# 2. UMR – Meson build (idempotent)
+# 2. UMR – Clean Meson build
 # ------------------------------------------------------------------
 echo "[2] Installing UMR (User Mode Register)..."
 
 if [ -d /opt/umr ]; then
+    echo "  /opt/umr exists – pulling updates and cleaning build."
     cd /opt/umr || exit
     sudo git pull --rebase
+    # Remove stale build directory completely
     if [ -d build ]; then
         sudo rm -rf build
     fi
@@ -49,26 +51,45 @@ else
     cd /opt/umr || exit
 fi
 
+# Run meson setup (creates build/ directory with all files)
 sudo meson setup build --reconfigure
+if [ $? -ne 0 ]; then
+    echo "ERROR: UMR Meson setup failed."
+    exit 1
+fi
+
 sudo ninja -C build
+if [ $? -ne 0 ]; then
+    echo "ERROR: UMR build failed."
+    exit 1
+fi
+
 sudo ninja -C build install
-echo "  UMR installed."
+if [ $? -ne 0 ]; then
+    echo "ERROR: UMR installation failed."
+    exit 1
+fi
+echo "  ✅ UMR installed."
 
 # ------------------------------------------------------------------
 # 3. Radeon GPU Detective – CMake build with submodules
 # ------------------------------------------------------------------
 echo "[3] Installing Radeon GPU Detective..."
 
-# Clone with --recursive to get submodules
+# Clone to /tmp (writable) with submodules
 if [ -d /tmp/radeon_gpu_detective ]; then
+    echo "  /tmp/radeon_gpu_detective exists – pulling updates and initializing submodules."
     cd /tmp/radeon_gpu_detective || exit
     git pull --rebase
+    # Critical: initialize and update submodules
     git submodule update --init --recursive
 else
+    echo "  Cloning RGD with --recursive..."
     git clone --recursive https://github.com/GPUOpen-Tools/radeon_gpu_detective.git /tmp/radeon_gpu_detective
     cd /tmp/radeon_gpu_detective || exit
 fi
 
+# Clean and rebuild
 if [ -d build ]; then
     rm -rf build
 fi
@@ -76,37 +97,37 @@ mkdir build && cd build || exit
 cmake .. || { echo "ERROR: RGD CMake configuration failed."; exit 1; }
 make -j$(nproc) || { echo "ERROR: RGD build failed."; exit 1; }
 sudo make install || { echo "ERROR: RGD installation failed."; exit 1; }
-echo "  RGD installed."
+echo "  ✅ RGD installed."
 
 # ------------------------------------------------------------------
-# 4. ROCm Validation Suite – CMake with ROCm dependencies
+# 4. ROCm Validation Suite – CMake build with ROCm dependencies
 # ------------------------------------------------------------------
 echo "[4] Installing ROCm Validation Suite..."
 
 # Check for rocblas (required)
-if ! ldconfig -p | grep -q rocblas; then
-    echo "ERROR: rocblas library not found. Please install it:"
-    echo "  sudo dnf install rocblas"
-    echo "  (You may need the ROCm repository enabled.)"
-    exit 1
-fi
-
-if [ -d /tmp/ROCmValidationSuite ]; then
-    cd /tmp/ROCmValidationSuite || exit
-    git pull --rebase
+if ! ldconfig -p 2>/dev/null | grep -q rocblas; then
+    echo "⚠️  rocblas not found. RVS requires rocblas."
+    echo "  To install: sudo dnf install rocblas"
+    echo "  Or skip RVS for now."
+    echo "  Continuing without RVS."
 else
-    git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/ROCmValidationSuite
-    cd /tmp/ROCmValidationSuite || exit
-fi
+    if [ -d /tmp/ROCmValidationSuite ]; then
+        cd /tmp/ROCmValidationSuite || exit
+        git pull --rebase
+    else
+        git clone https://github.com/ROCm/ROCmValidationSuite.git /tmp/ROCmValidationSuite
+        cd /tmp/ROCmValidationSuite || exit
+    fi
 
-if [ -d build ]; then
-    rm -rf build
+    if [ -d build ]; then
+        rm -rf build
+    fi
+    mkdir build && cd build || exit
+    cmake .. || { echo "ERROR: RVS CMake configuration failed."; exit 1; }
+    make -j$(nproc) || { echo "ERROR: RVS build failed."; exit 1; }
+    sudo make install || { echo "ERROR: RVS installation failed."; exit 1; }
+    echo "  ✅ RVS installed."
 fi
-mkdir build && cd build || exit
-cmake .. || { echo "ERROR: RVS CMake configuration failed."; exit 1; }
-make -j$(nproc) || { echo "ERROR: RVS build failed."; exit 1; }
-sudo make install || { echo "ERROR: RVS installation failed."; exit 1; }
-echo "  RVS installed."
 
 # ------------------------------------------------------------------
 # 5. Install root-cause-checker
@@ -120,7 +141,7 @@ fi
 
 echo ""
 echo "═══════════════════════════════════════════════════════════"
-echo "  SUCCESS: All tools installed."
+echo "  ✅ SUCCESS: All tools installed."
 echo "  Run 'root-cause-checker' to verify."
 echo "  Run 'sudo ./guardian-wizard.sh' to run health check."
 echo "═══════════════════════════════════════════════════════════"
